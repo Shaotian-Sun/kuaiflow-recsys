@@ -1,0 +1,24 @@
+seed: 2026
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  positive_column: is_click
+  validation_fraction_of_future: 0.5
+
+evaluation:
+  k: 20
+  max_users: 5000
+
+models:
+  itemcf:
+    neighbor_k: 100
+  bpr:
+    factors: 64
+    learning_rate: 0.03
+    regularization: 0.0001
+    epochs: 20
+    batch_size: 2048
+
+artifacts_dir: artifacts
+

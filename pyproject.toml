@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kuaiflow-recsys"
+version = "0.1.0"
+description = "A reproducible multi-stage short-video recommendation project on KuaiRand."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Shaotian Sun" }]
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "PyYAML>=6.0",
+  "scikit-learn>=1.4",
+  "scipy>=1.11",
+]
+
+[project.scripts]
+kuaiflow = "kuaiflow.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
