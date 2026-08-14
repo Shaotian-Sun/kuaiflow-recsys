@@ -136,7 +136,8 @@ accounting for the relevant logging propensities.
 
 ## Roadmap
 
-- **Week 1:** data pipeline, chronological evaluation, Popularity, ItemCF, BPR.
+- **Week 1 — Complete:** data pipeline, chronological evaluation, Popularity,
+  ItemCF, and BPR.
 - **Week 2:** two-tower retrieval and efficient top-k candidate generation.
 - **Week 3:** Shared-Bottom and MMoE ranking for click, long-view, and like.
 - **Week 4:** random-exposure bias audit and calibrated evaluation.
