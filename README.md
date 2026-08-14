@@ -31,6 +31,33 @@ and Bayesian Personalized Ranking (BPR) baselines.
 
 See [the week-one plan](docs/week1.md) for the experimental checklist.
 
+## Week 1 benchmark results
+
+All models are evaluated at \(K=20\) on 5,000 users. The evaluation uses
+novel warm-start positives and a training catalog containing 7,538 videos.
+Higher values are better for every metric.
+
+|   Split    | Model      | Recall@20 ↑ | HitRate@20 ↑ | NDCG@20 ↑ | Coverage@20 ↑ | Unique Items |
+| :--------: | :--------- | ----------: | -----------: | --------: | ------------: | -----------: |
+| Validation | Popularity |       7.95% |       20.18% |     4.45% |         0.56% |           42 |
+| Validation | BPR        |      10.19% |       25.78% |     5.78% |        16.26% |        1,226 |
+| Validation | **ItemCF** |  **11.58%** |   **28.26%** | **6.76%** |    **47.05%** |    **3,547** |
+|    Test    | Popularity |       7.20% |       20.02% |     4.15% |         0.53% |           40 |
+|    Test    | BPR        |       9.99% |       25.52% |     5.45% |        18.16% |        1,369 |
+|    Test    | **ItemCF** |  **10.78%** |   **27.78%** | **6.14%** |    **45.52%** |    **3,431** |
+
+### Key findings
+
+- ItemCF performs best across all ranking and coverage metrics.
+- On the test set, ItemCF improves Recall@20 by 49.7% and HitRate@20
+  by 38.8% relative to the popularity baseline.
+- BPR consistently improves over popularity, but remains behind ItemCF under
+  the initial untuned configuration.
+- Popularity recommends only 40 distinct test items, while ItemCF reaches
+  3,431, demonstrating the importance of personalization for catalog coverage.
+- Validation and test results are similar, suggesting that the model comparison
+  is reasonably stable across the two future time periods.
+
 ## Repository layout
 
 ```text
@@ -87,6 +114,11 @@ kuaiflow benchmark --config configs/week1.yaml --models popularity itemcf
 ```
 
 ## Evaluation notes
+
+The raw standard-policy files contain a small timestamp overlap at their
+boundary. Preprocessing conservatively removes 47 future rows whose timestamps
+are not later than the final training timestamp, preserving a strictly
+chronological evaluation.
 
 The default positive signal is `is_click`. In KuaiRand this represents a click
 for the two-column interface and a valid play for the single-column interface.

@@ -70,6 +70,8 @@ def split_future_by_time(
     """
     if not 0.0 < validation_fraction < 1.0:
         raise ValueError("validation_fraction must be strictly between 0 and 1")
+    history_end = history["time_ms"].max()
+    future = future.loc[future["time_ms"] > history_end].copy()
     if history["time_ms"].max() >= future["time_ms"].min():
         raise ValueError("Historical and future logs overlap; cannot make a strict time split")
 
