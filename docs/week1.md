@@ -16,8 +16,8 @@ introducing neural retrieval or multi-task ranking.
 - [x] Evaluate Recall@K, HitRate@K, NDCG@K, and catalog coverage.
 - [x] Restrict the main benchmark to novel, warm-start positives.
 - [x] Add unit tests and a synthetic end-to-end demo.
-- [ ] Run the full benchmark and record the first empirical results.
-- [ ] Inspect results by user activity and item popularity.
+- [x] Run the full benchmark and record the first empirical results.
+- [x] Inspect results by user activity and item popularity.
 
 ## Experimental protocol
 

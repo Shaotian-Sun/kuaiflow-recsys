@@ -13,6 +13,12 @@ import pandas as pd
 from kuaiflow.data import Week1Splits
 from kuaiflow.metrics import build_ground_truth, evaluate_recommendations
 from kuaiflow.models import BPRMatrixFactorization, ItemCFRecommender, PopularityRecommender
+from kuaiflow.segments import (
+    build_item_popularity_groups,
+    build_user_activity_groups,
+    evaluate_item_groups,
+    evaluate_user_groups,
+)
 
 
 def _evaluation_users(
@@ -58,6 +64,12 @@ def run_week1_benchmark(
         for user, group in training_positives.groupby("user_id", sort=False)
     }
 
+    user_activity_groups = build_user_activity_groups(training_positives)
+    item_popularity_groups = build_item_popularity_groups(
+        training_positives,
+        catalog,
+    )
+
     ground_truth = {
         "validation": build_ground_truth(
             splits.validation,
@@ -81,6 +93,10 @@ def run_week1_benchmark(
         "label": label_col,
         "k": k,
         "models": {},
+        "segments": {
+            "user_activity": [],
+            "item_popularity": [],
+        },
     }
     for name in selected_models:
         model = _make_model(name, config.get("models", {}), seed)
@@ -91,6 +107,28 @@ def run_week1_benchmark(
         model_results: dict[str, Any] = {"fit_seconds": fit_seconds}
         for split_name in ("validation", "test"):
             recommendations = model.recommend(users[split_name], k=k)
+            user_rows = evaluate_user_groups(
+                recommendations,
+                ground_truth[split_name],
+                user_activity_groups,
+                k,
+                catalog,
+            )   
+            for row in user_rows:
+                results["segments"]["user_activity"].append(
+                {"model": name, "split": split_name, **row}
+            )
+
+            item_rows = evaluate_item_groups(
+                recommendations,
+                ground_truth[split_name],
+                item_popularity_groups,
+                k,
+                )
+            for row in item_rows:
+                results["segments"]["item_popularity"].append(
+                    {"model": name, "split": split_name, **row}
+                )
             model_results[split_name] = evaluate_recommendations(
                 recommendations,
                 ground_truth[split_name],
@@ -112,3 +150,16 @@ def save_benchmark_results(results: dict[str, Any], artifacts_dir: str | Path) -
         for split in ("validation", "test"):
             rows.append({"model": model, "split": split, **model_result[split]})
     pd.DataFrame(rows).to_csv(output / "week1_results.csv", index=False)
+    pd.DataFrame(
+        results["segments"]["user_activity"]
+    ).to_csv(
+        output / "week1_user_activity.csv",
+        index=False,
+    )
+
+    pd.DataFrame(
+        results["segments"]["item_popularity"]
+    ).to_csv(
+        output / "week1_item_popularity.csv",
+        index=False,
+    )

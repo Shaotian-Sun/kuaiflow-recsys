@@ -120,7 +120,7 @@ class BPRMatrixFactorization:
         fallback = self.popularity / popularity_scale
 
         for user in user_ids:
-            if user in self.user_to_index:
+            if user in self.user_seen:
                 user_index = self.user_to_index[user]
                 scores = self.user_factors[user_index] @ self.item_factors.T
                 scores = scores + 1e-8 * fallback

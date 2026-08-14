@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">KuaiFlow Week 1 recommendation baseline results</title>
+  <desc id="desc">Portfolio infographic comparing Popularity, BPR, and ItemCF on KuaiRand using Recall at 20, Hit Rate at 20, NDCG at 20, catalog reach, and performance by user activity.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="0.56" stop-color="#0a1628"/>
+      <stop offset="1" stop-color="#10213a"/>
+    </linearGradient>
+    <linearGradient id="itemcfGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1fb7aa"/>
+      <stop offset="1" stop-color="#50e3d4"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000000" flood-opacity="0.24"/>
+    </filter>
+    <style>
+      .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .muted { fill: #93a4bd; }
+      .white { fill: #f7fbff; }
+      .line { stroke: #24344e; stroke-width: 1; }
+      .card { fill: #0d1b30; stroke: #20324e; stroke-width: 1.5; }
+      .label { font-size: 18px; font-weight: 650; letter-spacing: .2px; }
+      .tiny { font-size: 15px; }
+      .metric { font-size: 27px; font-weight: 750; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <circle cx="1410" cy="-40" r="270" fill="#24d6c8" opacity="0.07"/>
+  <circle cx="-20" cy="870" r="300" fill="#a78bfa" opacity="0.06"/>
+
+  <g class="sans">
+    <g transform="translate(72 62)">
+      <rect x="0" y="0" width="92" height="34" rx="17" fill="#143a3c"/>
+      <text x="46" y="23" text-anchor="middle" fill="#50e3d4" font-size="14" font-weight="750" letter-spacing="1.4">WEEK 1</text>
+      <text x="0" y="84" class="white" font-size="52" font-weight="780" letter-spacing="-1.5">KuaiFlow</text>
+      <text x="265" y="84" fill="#93a4bd" font-size="52" font-weight="430" letter-spacing="-1.5">Recommendation Baselines</text>
+      <text x="0" y="122" class="muted" font-size="19">Strict chronological evaluation on KuaiRand · novel-item warm-start protocol · K = 20</text>
+    </g>
+
+    <g transform="translate(72 216)" filter="url(#shadow)">
+      <rect width="1456" height="126" rx="24" class="card"/>
+      <g transform="translate(34 28)">
+        <text class="muted tiny" x="0" y="0" dominant-baseline="hanging">TRAIN INTERACTIONS</text>
+        <text class="white" x="0" y="58" font-size="38" font-weight="760">1.14M</text>
+      </g>
+      <line x1="305" y1="28" x2="305" y2="98" class="line"/>
+      <g transform="translate(344 28)">
+        <text class="muted tiny" x="0" y="0" dominant-baseline="hanging">TRAINING CATALOG</text>
+        <text class="white" x="0" y="58" font-size="38" font-weight="760">7,538 <tspan font-size="18" fill="#93a4bd">videos</tspan></text>
+      </g>
+      <line x1="660" y1="28" x2="660" y2="98" class="line"/>
+      <g transform="translate(700 28)">
+        <text class="muted tiny" x="0" y="0" dominant-baseline="hanging">EVALUATION</text>
+        <text class="white" x="0" y="58" font-size="38" font-weight="760">5,000 <tspan font-size="18" fill="#93a4bd">users</tspan></text>
+      </g>
+      <line x1="1024" y1="28" x2="1024" y2="98" class="line"/>
+      <g transform="translate(1064 24)">
+        <rect width="356" height="78" rx="18" fill="#103435" stroke="#1d5f5b"/>
+        <circle cx="39" cy="39" r="20" fill="#24d6c8" opacity="0.16"/>
+        <path d="M31 39l6 6 12-14" fill="none" stroke="#50e3d4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="72" y="31" fill="#50e3d4" font-size="15" font-weight="720">OVERALL WINNER</text>
+        <text x="72" y="57" class="white" font-size="25" font-weight="760">ItemCF</text>
+      </g>
+    </g>
+
+    <g transform="translate(72 374)">
+      <rect width="930" height="420" rx="24" class="card" filter="url(#shadow)"/>
+      <text x="32" y="44" class="white" font-size="24" font-weight="740">Test-set ranking quality</text>
+      <text x="32" y="72" class="muted tiny">Absolute metric value · higher is better</text>
+
+      <g transform="translate(32 95)">
+        <g>
+          <text x="0" y="18" class="label white">Recall@20</text>
+          <text x="176" y="18" class="tiny" fill="#f4b860">Popularity</text>
+          <rect x="286" y="4" width="317" height="18" rx="9" fill="#f4b860" opacity=".92"/>
+          <text x="618" y="18" class="tiny white">7.20%</text>
+          <text x="176" y="48" class="tiny" fill="#a78bfa">BPR</text>
+          <rect x="286" y="34" width="448" height="18" rx="9" fill="#a78bfa" opacity=".92"/>
+          <text x="749" y="48" class="tiny white">10.17%</text>
+          <text x="176" y="78" class="tiny" fill="#50e3d4">ItemCF</text>
+          <rect x="286" y="64" width="474" height="18" rx="9" fill="url(#itemcfGrad)"/>
+          <text x="775" y="78" class="tiny white" font-weight="700">10.78%</text>
+        </g>
+
+        <line x1="0" y1="95" x2="866" y2="95" class="line"/>
+        <g transform="translate(0 110)">
+          <text x="0" y="18" class="label white">HitRate@20</text>
+          <text x="176" y="18" class="tiny" fill="#f4b860">Popularity</text>
+          <rect x="286" y="4" width="340" height="18" rx="9" fill="#f4b860" opacity=".92"/>
+          <text x="641" y="18" class="tiny white">20.02%</text>
+          <text x="176" y="48" class="tiny" fill="#a78bfa">BPR</text>
+          <rect x="286" y="34" width="439" height="18" rx="9" fill="#a78bfa" opacity=".92"/>
+          <text x="740" y="48" class="tiny white">25.84%</text>
+          <text x="176" y="78" class="tiny" fill="#50e3d4">ItemCF</text>
+          <rect x="286" y="64" width="472" height="18" rx="9" fill="url(#itemcfGrad)"/>
+          <text x="773" y="78" class="tiny white" font-weight="700">27.78%</text>
+        </g>
+
+        <line x1="0" y1="215" x2="866" y2="215" class="line"/>
+        <g transform="translate(0 225)">
+          <text x="0" y="18" class="label white">NDCG@20</text>
+          <text x="176" y="18" class="tiny" fill="#f4b860">Popularity</text>
+          <rect x="286" y="4" width="337" height="18" rx="9" fill="#f4b860" opacity=".92"/>
+          <text x="638" y="18" class="tiny white">4.15%</text>
+          <text x="176" y="48" class="tiny" fill="#a78bfa">BPR</text>
+          <rect x="286" y="34" width="452" height="18" rx="9" fill="#a78bfa" opacity=".92"/>
+          <text x="753" y="48" class="tiny white">5.57%</text>
+          <text x="176" y="78" class="tiny" fill="#50e3d4">ItemCF</text>
+          <rect x="286" y="64" width="499" height="18" rx="9" fill="url(#itemcfGrad)"/>
+          <text x="800" y="78" class="tiny white" font-weight="700">6.14%</text>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(1030 374)">
+      <rect width="498" height="420" rx="24" class="card" filter="url(#shadow)"/>
+      <text x="30" y="44" class="white" font-size="24" font-weight="740">Why ItemCF wins</text>
+      <text x="30" y="72" class="muted tiny">Relative lift over Popularity on test</text>
+
+      <g transform="translate(30 106)">
+        <rect width="134" height="98" rx="18" fill="#103435" stroke="#1d5f5b"/>
+        <text x="18" y="34" fill="#50e3d4" font-size="27" font-weight="780">+49.7%</text>
+        <text x="18" y="65" class="white tiny">Recall@20</text>
+        <text x="18" y="85" class="muted" font-size="12">relative lift</text>
+      </g>
+      <g transform="translate(182 106)">
+        <rect width="134" height="98" rx="18" fill="#103435" stroke="#1d5f5b"/>
+        <text x="18" y="34" fill="#50e3d4" font-size="27" font-weight="780">+38.8%</text>
+        <text x="18" y="65" class="white tiny">HitRate@20</text>
+        <text x="18" y="85" class="muted" font-size="12">relative lift</text>
+      </g>
+      <g transform="translate(334 106)">
+        <rect width="134" height="98" rx="18" fill="#103435" stroke="#1d5f5b"/>
+        <text x="18" y="34" fill="#50e3d4" font-size="27" font-weight="780">+47.9%</text>
+        <text x="18" y="65" class="white tiny">NDCG@20</text>
+        <text x="18" y="85" class="muted" font-size="12">relative lift</text>
+      </g>
+
+      <g transform="translate(30 232)">
+        <text class="muted tiny" x="0" y="0">CATALOG REACH</text>
+        <text class="white" x="0" y="52" font-size="46" font-weight="780">3,431</text>
+        <text x="151" y="49" class="muted" font-size="16">unique test videos</text>
+        <text x="0" y="84" fill="#50e3d4" font-size="16" font-weight="680">ItemCF</text>
+        <text x="65" y="84" class="muted" font-size="15">vs.</text>
+        <text x="92" y="84" fill="#f4b860" font-size="16" font-weight="680">40 from Popularity</text>
+        <rect x="0" y="108" width="438" height="14" rx="7" fill="#1a2b45"/>
+        <rect x="0" y="108" width="438" height="14" rx="7" fill="url(#itemcfGrad)"/>
+        <circle cx="5" cy="115" r="5" fill="#f4b860"/>
+        <text x="0" y="152" class="muted" font-size="14">45.52% of the training catalog reached</text>
+      </g>
+    </g>
+
+    <g transform="translate(72 826)">
+      <rect width="1456" height="116" rx="24" class="card" filter="url(#shadow)"/>
+      <text x="30" y="38" class="white" font-size="21" font-weight="730">Best model by user activity</text>
+      <g transform="translate(30 58)">
+        <rect width="322" height="38" rx="19" fill="#17253c"/>
+        <text x="18" y="25" class="muted" font-size="14">NO POSITIVE HISTORY</text>
+        <text x="305" y="25" text-anchor="end" fill="#f4b860" font-size="14" font-weight="720">POPULARITY</text>
+      </g>
+      <g transform="translate(372 58)">
+        <rect width="322" height="38" rx="19" fill="#211d3f"/>
+        <text x="18" y="25" class="muted" font-size="14">LOW ACTIVITY</text>
+        <text x="305" y="25" text-anchor="end" fill="#a78bfa" font-size="14" font-weight="720">BPR*</text>
+      </g>
+      <g transform="translate(714 58)">
+        <rect width="352" height="38" rx="19" fill="#103435"/>
+        <text x="18" y="25" class="muted" font-size="14">MEDIUM ACTIVITY</text>
+        <text x="335" y="25" text-anchor="end" fill="#50e3d4" font-size="14" font-weight="720">ITEMCF</text>
+      </g>
+      <g transform="translate(1086 58)">
+        <rect width="370" height="38" rx="19" fill="#103435"/>
+        <text x="18" y="25" class="muted" font-size="14">HIGH ACTIVITY</text>
+        <text x="353" y="25" text-anchor="end" fill="#50e3d4" font-size="14" font-weight="720">ITEMCF</text>
+      </g>
+      <text x="1418" y="38" text-anchor="end" class="muted" font-size="13">*Test Recall &amp; NDCG; ItemCF wins low-activity validation</text>
+    </g>
+
+    <text x="72" y="978" class="muted" font-size="13">KuaiFlow · Popularity vs. ItemCF vs. BPR · chronological train / validation / test</text>
+    <text x="1528" y="978" text-anchor="end" class="muted" font-size="13">Stage 1 / 5</text>
+  </g>
+</svg>

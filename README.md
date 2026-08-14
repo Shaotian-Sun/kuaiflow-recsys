@@ -33,8 +33,8 @@ See [the week-one plan](docs/week1.md) for the experimental checklist.
 
 ## Week 1 benchmark results
 
-All models are evaluated at \(K=20\) on 5,000 users. The evaluation uses
-novel warm-start positives and a training catalog containing 7,538 videos.
+All models are evaluated at \(K=20\) on 5,000 users. The evaluation uses novel warm-start positives and a training catalog containing 7,538 videos. Users with no positive training interactions are retained and reported separately as the `zero_positive` group.
+
 Higher values are better for every metric.
 
 |   Split    | Model      | Recall@20 ↑ | HitRate@20 ↑ | NDCG@20 ↑ | Coverage@20 ↑ | Unique Items |
@@ -45,6 +45,10 @@ Higher values are better for every metric.
 |    Test    | Popularity |       7.20% |       20.02% |     4.15% |         0.53% |           40 |
 |    Test    | BPR        |       9.99% |       25.52% |     5.45% |        18.16% |        1,369 |
 |    Test    | **ItemCF** |  **10.78%** |   **27.78%** | **6.14%** |    **45.52%** |    **3,431** |
+
+See the [full Week 1 experimental report](docs/week1_results.md).
+
+![KuaiFlow Week 1 Results](docs/kuaiflow_week1_portfolio.svg)
 
 ### Key findings
 
