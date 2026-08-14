@@ -142,7 +142,8 @@ accounting for the relevant logging propensities.
 
 - **Week 1 — Complete:** data pipeline, chronological evaluation, Popularity,
   ItemCF, and BPR.
-- **Week 2:** two-tower retrieval and efficient top-k candidate generation.
+- **Week 2 — Ongoing:** ID-only two-tower retrieval and exact top-k evaluation
+  are complete; history features and FAISS are next.
 - **Week 3:** Shared-Bottom and MMoE ranking for click, long-view, and like.
 - **Week 4:** random-exposure bias audit and calibrated evaluation.
 - **Week 5:** diversity-aware reranking, FAISS serving, and final report.

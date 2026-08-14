@@ -1,6 +1,13 @@
 import unittest
 
-from kuaiflow.models import BPRMatrixFactorization, ItemCFRecommender, PopularityRecommender
+import numpy as np
+
+from kuaiflow.models import (
+    BPRMatrixFactorization,
+    ItemCFRecommender,
+    PopularityRecommender,
+    TwoTowerRecommender,
+)
 from kuaiflow.toy import make_toy_splits
 
 
@@ -31,7 +38,20 @@ class ModelTests(unittest.TestCase):
             BPRMatrixFactorization(factors=8, epochs=3, batch_size=4, seed=1)
         )
 
+    def test_two_tower(self) -> None:
+        model = TwoTowerRecommender(
+            embedding_dim=8,
+            hidden_dim=16,
+            learning_rate=0.01,
+            epochs=20,
+            batch_size=4,
+            seed=1,
+        )
+        self._assert_valid_recommendations(model)
+        self.assertEqual(len(model.training_history), 20)
+        self.assertTrue(all(np.isfinite(loss) for loss in model.training_history))
+        self.assertEqual(model.item_vectors.shape, (4, 8))
+
 
 if __name__ == "__main__":
     unittest.main()
-

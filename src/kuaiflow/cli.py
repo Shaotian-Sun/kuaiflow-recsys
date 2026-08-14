@@ -12,6 +12,7 @@ import yaml
 from kuaiflow.benchmark import run_week1_benchmark, save_benchmark_results
 from kuaiflow.data import load_prepared, prepare_week1_data
 from kuaiflow.download import download_kuairand_pure
+from kuaiflow.retrieval import run_week2_retrieval, save_week2_results
 from kuaiflow.toy import make_toy_splits
 
 
@@ -36,6 +37,9 @@ def _parser() -> argparse.ArgumentParser:
     )
 
     subparsers.add_parser("demo")
+    retrieval = subparsers.add_parser("retrieval")
+    retrieval.add_argument("--config", default="configs/week2.yaml")
+    subparsers.add_parser("retrieval-demo")
     return parser
 
 
@@ -60,6 +64,22 @@ def main() -> None:
         print(json.dumps(run_week1_benchmark(make_toy_splits(), config), indent=2))
         return
 
+    if args.command == "retrieval-demo":
+        config = {
+            "seed": 2026,
+            "data": {"positive_column": "is_click"},
+            "evaluation": {"k_values": [2], "max_users": None},
+            "model": {
+                "embedding_dim": 8,
+                "hidden_dim": 16,
+                "learning_rate": 0.01,
+                "epochs": 10,
+                "batch_size": 4,
+            },
+        }
+        print(json.dumps(run_week2_retrieval(make_toy_splits(), config), indent=2))
+        return
+
     config = _load_config(args.config)
     if args.command == "download":
         path = download_kuairand_pure(config["data"]["raw_dir"])
@@ -81,8 +101,13 @@ def main() -> None:
         )
         save_benchmark_results(results, config.get("artifacts_dir", "artifacts"))
         print(json.dumps(results, indent=2))
+    elif args.command == "retrieval":
+        results = run_week2_retrieval(
+            load_prepared(config["data"]["processed_dir"]), config
+        )
+        save_week2_results(results, config.get("artifacts_dir", "artifacts"))
+        print(json.dumps(results, indent=2))
 
 
 if __name__ == "__main__":
     main()
-
