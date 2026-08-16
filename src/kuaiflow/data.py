@@ -13,6 +13,8 @@ import pandas as pd
 HISTORY_FILE = "log_standard_4_08_to_4_21_pure.csv"
 FUTURE_FILE = "log_standard_4_22_to_5_08_pure.csv"
 RANDOM_FILE = "log_random_4_22_to_5_08_pure.csv"
+USER_FEATURE_FILE = "user_features_pure.csv"
+VIDEO_FEATURE_FILE = "video_features_basic_pure.csv"
 REQUIRED_COLUMNS = {"user_id", "video_id", "time_ms", "is_click"}
 
 
@@ -55,6 +57,21 @@ def load_kuairand_pure(raw_dir: str | Path) -> tuple[pd.DataFrame, pd.DataFrame,
     future = read_log(_find_unique_file(root, FUTURE_FILE))
     random_audit = read_log(_find_unique_file(root, RANDOM_FILE))
     return history, future, random_audit
+
+
+def load_kuairand_features(raw_dir: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Load static user features and non-behavioral video metadata.
+
+    The separate video statistics table is deliberately excluded: its aggregate
+    engagement counters do not carry a documented as-of timestamp and could leak
+    information from the evaluation period.
+    """
+    root = Path(raw_dir)
+    users = pd.read_csv(_find_unique_file(root, USER_FEATURE_FILE))
+    videos = pd.read_csv(_find_unique_file(root, VIDEO_FEATURE_FILE))
+    if "user_id" not in users or "video_id" not in videos:
+        raise ValueError("KuaiRand feature files are missing their ID columns")
+    return users, videos
 
 
 def split_future_by_time(
@@ -142,4 +159,3 @@ def load_prepared(processed_dir: str | Path) -> Week1Splits:
         test=load("test"),
         random_audit=load("random_audit"),
     )
-

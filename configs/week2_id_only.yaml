@@ -1,14 +1,13 @@
 seed: 2026
 
 experiment:
-  variant: feature_history
-  use_user_features: true
-  use_video_features: true
-  use_history: true
+  variant: id_only
+  use_user_features: false
+  use_video_features: false
+  use_history: false
 
 data:
   processed_dir: data/processed
-  raw_dir: data/raw
   positive_column: is_click
 
 evaluation:
