@@ -24,22 +24,42 @@ and Bayesian Personalized Ranking (BPR) baselines.
 - Random-exposure log reserved for a later bias audit.
 - Popularity and ItemCF baselines.
 - BPR matrix factorization implemented from scratch in NumPy.
+- Feature- and history-aware two-tower retrieval.
+- Exact and FAISS approximate-nearest-neighbor retrieval evaluation.
 - Recall@K, HitRate@K, NDCG@K, and catalog coverage.
 - Explicit novel-item, warm-start evaluation rather than mixing in impossible
   cold-start targets.
 - Deterministic toy demo and unit tests.
 
-## Experimental reports
+## Repository layout
 
-- [Week 1 — Baseline results](docs/week1_results.md): Popularity, ItemCF, and
-  BPR under the chronological warm-start evaluation protocol.
-- [Week 2 — Two-tower retrieval results](docs/week2_results.md): feature/history
-  ablations and the exact-versus-FAISS latency/fidelity study.
+```text
+configs/                 Experiment configuration
+data/raw/                Downloaded KuaiRand-Pure files (not tracked)
+data/processed/          Chronological data splits (not tracked)
+artifacts/               Benchmark results (not tracked)
+src/kuaiflow/            Data, models, metrics, and CLI
+tests/                    Unit and smoke tests
+```
 
-Implementation notes and milestone checklists remain available in the
-[Week 1 plan](docs/week1.md) and [Week 2 plan](docs/week2.md).
+## Project milestones
 
-## Week 1 benchmark results
+The work is organized as a sequence of milestones. Week 1 establishes the data,
+evaluation, and baseline foundation. Week 2 builds on that foundation with
+learned retrieval and scalable nearest-neighbor search.
+
+1. **Week 1 — Recommendation baselines:** chronological data preparation,
+   warm-start evaluation, Popularity, ItemCF, and BPR.
+2. **Week 2 — Two-tower retrieval:** feature and history ablations, followed by
+   exact-versus-FAISS latency and fidelity evaluation.
+
+## Week 1 — Recommendation baselines
+
+Week 1 creates the reproducible evaluation pipeline and establishes three
+implicit-feedback baselines. See the [Week 1 implementation plan](docs/week1.md)
+and [full experimental report](docs/week1_results.md).
+
+### Benchmark results
 
 All models are evaluated at \(K=20\) on 5,000 users. The evaluation uses novel warm-start positives and a training catalog containing 7,538 videos. Users with no positive training interactions are retained and reported separately as the `zero_positive` group.
 
@@ -71,18 +91,7 @@ the [Week 2 two-tower retrieval report](docs/week2_results.md).
 - Validation and test results are similar, suggesting that the model comparison
   is reasonably stable across the two future time periods.
 
-## Repository layout
-
-```text
-configs/                 Experiment configuration
-data/raw/                Downloaded KuaiRand-Pure files (not tracked)
-data/processed/          Chronological data splits (not tracked)
-artifacts/               Benchmark results (not tracked)
-src/kuaiflow/            Data, models, metrics, and CLI
-tests/                    Unit and smoke tests
-```
-
-## Quick start
+### Run Week 1
 
 Create a Python 3.10+ environment and install the package:
 
@@ -126,7 +135,15 @@ To iterate more quickly, run only selected models:
 kuaiflow benchmark --config configs/week1.yaml --models popularity itemcf
 ```
 
-### Week 2 retrieval and FAISS
+## Week 2 — Two-tower retrieval and FAISS
+
+Week 2 follows the same chronological warm-start protocol established in Week
+1, replacing hand-designed retrieval scores with a learned two-tower model. It
+then compares exact retrieval with FAISS Flat, IVF, and HNSW indexes. See the
+[Week 2 implementation plan](docs/week2.md) and
+[full experimental report](docs/week2_results.md).
+
+### Run Week 2
 
 Install the optional CPU FAISS dependency before running a FAISS experiment:
 
