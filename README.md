@@ -29,7 +29,15 @@ and Bayesian Personalized Ranking (BPR) baselines.
   cold-start targets.
 - Deterministic toy demo and unit tests.
 
-See [the week-one plan](docs/week1.md) for the experimental checklist.
+## Experimental reports
+
+- [Week 1 — Baseline results](docs/week1_results.md): Popularity, ItemCF, and
+  BPR under the chronological warm-start evaluation protocol.
+- [Week 2 — Two-tower retrieval results](docs/week2_results.md): feature/history
+  ablations and the exact-versus-FAISS latency/fidelity study.
+
+Implementation notes and milestone checklists remain available in the
+[Week 1 plan](docs/week1.md) and [Week 2 plan](docs/week2.md).
 
 ## Week 1 benchmark results
 
@@ -46,7 +54,8 @@ Higher values are better for every metric.
 |    Test    | BPR        |       9.99% |       25.52% |     5.45% |        18.16% |        1,369 |
 |    Test    | **ItemCF** |  **10.78%** |   **27.78%** | **6.14%** |    **45.52%** |    **3,431** |
 
-See the [full Week 1 experimental report](docs/week1_results.md).
+See the [full Week 1 experimental report](docs/week1_results.md) or continue to
+the [Week 2 two-tower retrieval report](docs/week2_results.md).
 
 ![KuaiFlow Week 1 Results](docs/kuaiflow_week1_portfolio.svg)
 
