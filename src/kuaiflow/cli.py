@@ -12,7 +12,12 @@ import yaml
 from kuaiflow.benchmark import run_week1_benchmark, save_benchmark_results
 from kuaiflow.data import load_prepared, prepare_week1_data
 from kuaiflow.download import download_kuairand_pure
-from kuaiflow.retrieval import run_week2_retrieval, save_week2_results
+from kuaiflow.retrieval import (
+    run_week2_retrieval,
+    save_week2_results,
+    run_faiss_tradeoff_analysis,
+    save_tradeoff_results,
+)
 from kuaiflow.toy import make_toy_splits
 
 
@@ -22,6 +27,25 @@ def _load_config(path: str | Path) -> dict[str, Any]:
     if not isinstance(config, dict):
         raise ValueError("Configuration must be a YAML mapping")
     return config
+
+
+def _validate_retrieval_mode(mode: str, config: dict[str, Any]) -> None:
+    """Reject ambiguous CLI mode/config combinations."""
+    has_faiss_config = bool(config.get("faiss"))
+    if mode == "standard" and has_faiss_config:
+        raise ValueError(
+            "--mode standard cannot be used with a faiss configuration; "
+            "use --mode faiss or remove the faiss block"
+        )
+    if mode == "faiss" and not has_faiss_config:
+        raise ValueError(
+            "--mode faiss requires a non-empty faiss block in the configuration"
+        )
+    if mode == "tradeoff" and has_faiss_config:
+        raise ValueError(
+            "--mode tradeoff defines its own index matrix; use a configuration "
+            "without a faiss block"
+        )
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -39,6 +63,12 @@ def _parser() -> argparse.ArgumentParser:
     subparsers.add_parser("demo")
     retrieval = subparsers.add_parser("retrieval")
     retrieval.add_argument("--config", default="configs/week2.yaml")
+    retrieval.add_argument(
+        "--mode",
+        choices=["standard", "faiss", "tradeoff"],
+        default="standard",
+        help="Retrieval mode: standard, faiss, or tradeoff analysis",
+    )
     subparsers.add_parser("retrieval-demo")
     return parser
 
@@ -102,11 +132,19 @@ def main() -> None:
         save_benchmark_results(results, config.get("artifacts_dir", "artifacts"))
         print(json.dumps(results, indent=2))
     elif args.command == "retrieval":
-        results = run_week2_retrieval(
-            load_prepared(config["data"]["processed_dir"]), config
-        )
-        save_week2_results(results, config.get("artifacts_dir", "artifacts"))
-        print(json.dumps(results, indent=2))
+        _validate_retrieval_mode(args.mode, config)
+        splits = load_prepared(config["data"]["processed_dir"])
+
+        if args.mode == "tradeoff":
+            # 运行 tradeoff 分析
+            results = run_faiss_tradeoff_analysis(splits, config)
+            save_tradeoff_results(results, config.get("artifacts_dir", "artifacts"))
+            print(json.dumps(results, indent=2))
+        else:
+            # standard 或 faiss 模式（通过 config 中的 faiss 配置自动切换）
+            results = run_week2_retrieval(splits, config)
+            save_week2_results(results, config.get("artifacts_dir", "artifacts"))
+            print(json.dumps(results, indent=2))
 
 
 if __name__ == "__main__":

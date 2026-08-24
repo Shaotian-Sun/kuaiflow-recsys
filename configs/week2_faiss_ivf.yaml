@@ -29,4 +29,10 @@ model:
   batch_size: 512
   device: cpu
 
+faiss:
+  index_type: ivf
+  n_lists: 100
+  n_probe: 10
+  use_gpu: false
+
 artifacts_dir: artifacts

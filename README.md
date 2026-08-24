@@ -117,6 +117,54 @@ To iterate more quickly, run only selected models:
 kuaiflow benchmark --config configs/week1.yaml --models popularity itemcf
 ```
 
+### Week 2 retrieval and FAISS
+
+Install the optional CPU FAISS dependency before running a FAISS experiment:
+
+```bash
+python -m pip install -e ".[faiss]"
+```
+
+Run the final feature- and history-aware model with the selected IVF index:
+
+```bash
+kuaiflow retrieval --config configs/week2_faiss_ivf.yaml --mode faiss
+```
+
+Run the exact, FAISS Flat, IVF, and HNSW latency/accuracy comparison. The model
+is trained once and reused by every retrieval backend:
+
+```bash
+OMP_NUM_THREADS=1 kuaiflow retrieval \
+  --config configs/week2_feature_history.yaml --mode tradeoff
+```
+
+The comparison is written to `artifacts/faiss_tradeoff_analysis.json` and
+`artifacts/faiss_tradeoff_comparison.csv`.
+
+In addition to downstream Recall/NDCG, the comparison directly measures ANN
+fidelity against exact retrieval: candidate Recall@K, rank-sensitive candidate
+NDCG@K, final-list overlap after filtering, and complete ordered-list match rate.
+The selected IVF-100/10 configuration recovers 86.49% of exact top-100
+candidates while making candidate search about 2.8x faster.
+
+The latency comparison uses one warmup followed by five measured runs. It
+reports median and p95 latency at three matching boundaries for every backend:
+
+- `search`: precomputed user embeddings through candidate search;
+- `pipeline`: candidate search plus seen-item filtering and fallback;
+- `end_to_end`: user embedding generation through search and post-processing.
+
+Index construction is reported separately because it is an offline operation.
+Change `latency_warmup_runs` and `latency_measured_runs` under `evaluation` in
+the YAML configuration to control the benchmark. `OMP_NUM_THREADS=1` makes CPU
+threading explicit and reproducible; use the same value whenever comparing
+results from different runs.
+
+CLI modes are explicit: `standard` rejects configurations containing `faiss`,
+`faiss` requires a non-empty `faiss` block, and `tradeoff` uses its own fixed
+index matrix and therefore rejects a single-index `faiss` block.
+
 ## Evaluation notes
 
 The raw standard-policy files contain a small timestamp overlap at their
@@ -142,8 +190,8 @@ accounting for the relevant logging propensities.
 
 - **Week 1 — Complete:** data pipeline, chronological evaluation, Popularity,
   ItemCF, and BPR.
-- **Week 2 — Ongoing:** ID-only two-tower retrieval and exact top-k evaluation
-  are complete; history features and FAISS are next.
+- **Week 2 — Complete:** feature/history-aware two-tower retrieval, controlled
+  ablations, and matched exact-versus-FAISS latency evaluation.
 - **Week 3:** Shared-Bottom and MMoE ranking for click, long-view, and like.
 - **Week 4:** random-exposure bias audit and calibrated evaluation.
 - **Week 5:** diversity-aware reranking, FAISS serving, and final report.
