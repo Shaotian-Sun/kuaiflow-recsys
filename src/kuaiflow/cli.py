@@ -18,6 +18,7 @@ from kuaiflow.retrieval import (
     run_faiss_tradeoff_analysis,
     save_tradeoff_results,
 )
+from kuaiflow.ranking import run_deepfm_ranking, save_deepfm_run
 from kuaiflow.toy import make_toy_splits
 
 
@@ -70,6 +71,8 @@ def _parser() -> argparse.ArgumentParser:
         help="Retrieval mode: standard, faiss, or tradeoff analysis",
     )
     subparsers.add_parser("retrieval-demo")
+    deepfm = subparsers.add_parser("deepfm")
+    deepfm.add_argument("--config", default="configs/week3_deepfm.yaml")
     return parser
 
 
@@ -151,6 +154,17 @@ def main() -> None:
                 {key: value for key, value in results.items() if key != "candidates"},
                 indent=2,
             ))
+    elif args.command == "deepfm":
+        run = run_deepfm_ranking(
+            load_prepared(config["data"]["processed_dir"]), config
+        )
+        save_deepfm_run(
+            run,
+            config,
+            config.get("artifacts_dir", "artifacts"),
+            config["data"]["reranked_candidates_path"],
+        )
+        print(json.dumps(run.results, indent=2))
 
 
 if __name__ == "__main__":

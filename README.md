@@ -195,6 +195,23 @@ the YAML configuration to control the benchmark. `OMP_NUM_THREADS=1` makes CPU
 threading explicit and reproducible; use the same value whenever comparing
 results from different runs.
 
+## Week 3 — DeepFM ranking
+
+Week 3 starts with a standalone DeepFM click model. It trains on logged
+impressions, then scores and reorders the selected Week 2 top-100 candidates
+without changing candidate membership. Its linear, FM, and deep branches are
+optimized jointly with one binary click loss. See the
+[DeepFM guide](docs/week3_deepfm.md) for the model equation, leakage rules, and
+evaluation protocol.
+
+```bash
+OMP_NUM_THREADS=1 kuaiflow deepfm --config configs/week3_deepfm.yaml
+```
+
+The first full run reached 0.7195 test click AUC. Over the fixed candidates it
+improved test NDCG@20 by 19.2% and HitRate@20 by 40.2%, while reducing
+Coverage@20 from 84.1% to 38.7%; the full trade-off is reported in the guide.
+
 CLI modes are explicit: `standard` rejects configurations containing `faiss`,
 `faiss` requires a non-empty `faiss` block, and `tradeoff` uses its own fixed
 index matrix and therefore rejects a single-index `faiss` block.

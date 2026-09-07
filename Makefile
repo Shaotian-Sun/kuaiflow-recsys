@@ -1,4 +1,4 @@
-.PHONY: install test demo download prepare benchmark
+.PHONY: install test demo download prepare benchmark deepfm
 
 install:
 	python -m pip install -e .
@@ -18,3 +18,5 @@ prepare:
 benchmark:
 	python -m kuaiflow.cli benchmark --config configs/week1.yaml
 
+deepfm:
+	python -m kuaiflow.cli deepfm --config configs/week3_deepfm.yaml
