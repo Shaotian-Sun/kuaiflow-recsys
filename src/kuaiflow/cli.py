@@ -141,10 +141,16 @@ def main() -> None:
             save_tradeoff_results(results, config.get("artifacts_dir", "artifacts"))
             print(json.dumps(results, indent=2))
         else:
-            # standard 或 faiss 模式（通过 config 中的 faiss 配置自动切换）
             results = run_week2_retrieval(splits, config)
-            save_week2_results(results, config.get("artifacts_dir", "artifacts"))
-            print(json.dumps(results, indent=2))
+            save_week2_results(
+                results,
+                config.get("artifacts_dir", "artifacts"),
+                config.get("data", {}).get("candidates_path"),
+            )
+            print(json.dumps(
+                {key: value for key, value in results.items() if key != "candidates"},
+                indent=2,
+            ))
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ data:
   processed_dir: data/processed
   raw_dir: data/raw
   positive_column: is_click
+  candidates_path: data/processed/candidates/week2_feature_history_faiss_ivf_top100.csv.gz
 
 evaluation:
   k_values: [50, 100]

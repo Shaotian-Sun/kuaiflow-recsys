@@ -174,6 +174,14 @@ NDCG@K, final-list overlap after filtering, and complete ordered-list match rate
 The selected IVF-100/10 configuration recovers 86.49% of exact top-100
 candidates while making candidate search about 2.8x faster.
 
+The selected Week 2 run also persists its final ordered candidate lists as
+`data/processed/candidates/week2_feature_history_faiss_ivf_top100.csv.gz`.
+The path is declared by `data.candidates_path` in the selected configuration.
+Each row contains the split, user ID, video ID, and one-based retrieval rank.
+This generated dataset is the explicit retrieval-to-ranking handoff for Week 3;
+the downstream ranker learns its own score rather than taking the retrieval
+score as an input feature.
+
 The latency comparison uses one warmup followed by five measured runs. It
 reports median and p95 latency at three matching boundaries for every backend:
 
@@ -218,7 +226,7 @@ accounting for the relevant logging propensities.
   ItemCF, and BPR.
 - **Week 2 — Complete:** feature/history-aware two-tower retrieval, controlled
   ablations, and matched exact-versus-FAISS latency evaluation.
-- **Week 3:** Shared-Bottom and MMoE ranking for click, long-view, and like.
+- **Week 3:** DeepFM ranking over the Week 2 top-100 candidates.
 - **Week 4:** random-exposure bias audit and calibrated evaluation.
 - **Week 5:** diversity-aware reranking, FAISS serving, and final report.
 

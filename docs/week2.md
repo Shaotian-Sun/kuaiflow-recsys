@@ -64,6 +64,14 @@ This writes `artifacts/week2_feature_history_results.json` and
 as a shorthand for the feature/history configuration and produces the same
 variant-specific filenames.
 
+The selected retrieval run also saves its final candidate lists to the
+`data.candidates_path` declared in `configs/week2_faiss_ivf.yaml`:
+`data/processed/candidates/week2_feature_history_faiss_ivf_top100.csv.gz`.
+It contains one row per candidate with `split`, `user_id`, `video_id`, and the
+one-based `retrieval_rank`. Retrieval scores are deliberately excluded: Week 2
+decides which 100 items enter ranking, while the downstream ranker learns a new
+score from supervised engagement labels.
+
 Both configurations use the same random seed, model dimensions, optimization
 settings, evaluation users, and warm-start novel-item protocol. The only intended
 difference is the user/video metadata and causal-history switches, making this

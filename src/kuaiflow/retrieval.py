@@ -445,6 +445,27 @@ def _get_user_embeddings_batch(
     return np.array(all_embeddings, dtype=np.float32)
 
 
+def _candidate_rows(
+    split: str,
+    user_ids: list[Any],
+    recommendations: dict[Any, list[Any]],
+) -> list[dict[str, Any]]:
+    """Flatten final retrieval lists for persistence and downstream ranking."""
+    rows: list[dict[str, Any]] = []
+    for user in user_ids:
+        items = recommendations[user]
+        rows.extend(
+            {
+                "split": split,
+                "user_id": user,
+                "video_id": item,
+                "retrieval_rank": rank,
+            }
+            for rank, item in enumerate(items, start=1)
+        )
+    return rows
+
+
 def run_week2_retrieval(
     splits: Week1Splits, config: dict[str, Any]
 ) -> dict[str, Any]:
@@ -523,6 +544,8 @@ def run_week2_retrieval(
         "label": label_col,
         "fit_seconds": fit_seconds,
         "training_loss": model.training_history,
+        "candidate_k": max(k_values),
+        "candidates": {},
         "splits": {},
     }
 
@@ -581,6 +604,11 @@ def run_week2_retrieval(
                 k=k,
                 catalog=catalog,
             )
+        results["candidates"][split_name] = _candidate_rows(
+            split_name,
+            users[split_name],
+            recommendations,
+        )
         results["splits"][split_name] = split_results
 
     return results
@@ -951,16 +979,38 @@ def run_faiss_tradeoff_analysis(
     return tradeoff_results
 
 
-def save_week2_results(results: dict[str, Any], artifacts_dir: str | Path) -> None:
-    """Save results to JSON and CSV files."""
+def save_week2_results(
+    results: dict[str, Any],
+    artifacts_dir: str | Path,
+    candidates_path: str | Path | None = None,
+) -> None:
+    """Save compact metrics plus reusable retrieval candidates."""
     output = Path(artifacts_dir)
     output.mkdir(parents=True, exist_ok=True)
     variant = re.sub(r"[^a-zA-Z0-9_-]+", "_", results.get("variant", "two_tower"))
     stem = f"week2_{variant}_results"
 
-    # Save JSON
+    # Keep the metrics JSON compact. Candidate rows are a separate, typed table
+    # that Week 3 can load directly without parsing a very large nested JSON file.
+    summary = {key: value for key, value in results.items() if key != "candidates"}
+    candidates = [
+        row
+        for split_rows in results.get("candidates", {}).values()
+        for row in split_rows
+    ]
+    candidate_output = Path(candidates_path) if candidates_path is not None else None
+    summary["candidate_data"] = (
+        str(candidate_output) if candidates and candidate_output is not None else None
+    )
+    summary["candidate_rows"] = len(candidates)
     with (output / f"{stem}.json").open("w", encoding="utf-8") as handle:
-        json.dump(results, handle, indent=2)
+        json.dump(summary, handle, indent=2)
+
+    if candidates and candidate_output is not None:
+        candidate_output.parent.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(candidates).to_csv(
+            candidate_output, index=False, compression="gzip"
+        )
 
     # Save CSV
     rows: list[dict[str, Any]] = []

@@ -88,9 +88,28 @@ class RetrievalTests(unittest.TestCase):
         self.assertFalse(results["features"]["video_basic"])
         self.assertFalse(results["features"]["causal_history"])
         with TemporaryDirectory() as directory:
-            save_week2_results(results, directory)
+            candidate_path = Path(
+                directory, "processed", "week2_id_only_top2.csv.gz"
+            )
+            save_week2_results(results, directory, candidate_path)
             self.assertTrue(Path(directory, "week2_id_only_results.json").exists())
             self.assertTrue(Path(directory, "week2_id_only_results.csv").exists())
+            self.assertTrue(candidate_path.exists())
+            candidates = retrieval_module.pd.read_csv(candidate_path)
+            self.assertEqual(
+                list(candidates.columns),
+                [
+                    "split", "user_id", "video_id", "retrieval_rank",
+                ],
+            )
+            self.assertEqual(len(candidates), 16)
+            self.assertTrue(candidates.groupby(["split", "user_id"]).size().eq(2).all())
+            self.assertTrue(
+                candidates.groupby(["split", "user_id"])["retrieval_rank"]
+                .apply(list)
+                .map(lambda ranks: ranks == [1, 2])
+                .all()
+            )
 
     @unittest.skipUnless(FAISS_AVAILABLE, "faiss is not installed")
     def test_faiss_flat_matches_exact_metrics_after_seen_filtering(self) -> None:
