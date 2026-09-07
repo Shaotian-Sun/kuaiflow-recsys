@@ -1,0 +1,93 @@
+seed: 2026
+
+data:
+  processed_dir: data/processed
+  raw_dir: data/raw
+  candidates_path: data/processed/candidates/week2_feature_history_faiss_ivf_top100.csv.gz
+  reranked_candidates_path: data/processed/ranking/week3_mmoe_top100.csv.gz
+  # Stable fields available for both logged impressions and unseen candidates.
+  categorical_features:
+    - user_id
+    - video_id
+    - author_id
+    - video_type
+    - upload_type
+    - music_id
+    - music_type
+  numeric_features:
+    - video_duration
+    - server_width
+    - server_height
+
+tasks:
+  # Each sigmoid is an estimated per-impression action rate.  Outcomes are
+  # labels only; none is allowed into the input feature matrix.
+  binary:
+    click: is_click
+    like: is_like
+    follow: is_follow
+    comment: is_comment
+    forward: is_forward
+    long_view: long_view
+    profile_enter: is_profile_enter
+    hate: is_hate
+  # These heads estimate an undesirable event and are subtracted at serving.
+  negative:
+    - hate
+
+model:
+  embedding_dim: 16
+  num_experts: 4
+  expert_hidden_dims: [128, 64]
+  tower_hidden_dim: 32
+  dropout: 0.1
+  device: cpu
+
+training:
+  learning_rate: 0.001
+  weight_decay: 0.000001
+  epochs: 5
+  batch_size: 4096
+  early_stopping_patience: 2
+  watch_time_tau_seconds: 1.0
+  # Each raw loss is divided by its train-only constant-predictor loss before
+  # applying these weights.  Thus sparse heads remain present without changing
+  # the calibrated optimum via positive-class weighting.
+  loss_weights:
+    click: 1.0
+    like: 1.0
+    follow: 1.0
+    comment: 1.0
+    forward: 1.0
+    long_view: 1.0
+    profile_enter: 1.0
+    hate: 1.0
+    watch_time: 1.0
+    completion: 1.0
+
+ranking:
+  duration_curve_bins: 50
+  watch_time_reference_quantile: 0.95
+  # A transparent neutral starting policy: one unit of expected value for each
+  # positive signal and minus one for expected negative feedback.  These are
+  # serving-policy choices to tune later, not additional learned labels.
+  utility_weights:
+    click: 1.0
+    like: 1.0
+    follow: 1.0
+    comment: 1.0
+    forward: 1.0
+    long_view: 1.0
+    profile_enter: 1.0
+    hate: -1.0
+    watch_time: 1.0
+    completion: 1.0
+
+evaluation:
+  candidate_k: 100
+  expected_users_per_split: 5000
+  candidate_chunk_size: 100000
+  watch_time_prediction_cap_seconds: 1200.0
+  k_values: [10, 20, 50, 100]
+
+artifacts_dir: artifacts

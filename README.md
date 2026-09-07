@@ -212,6 +212,21 @@ The first full run reached 0.7195 test click AUC. Over the fixed candidates it
 improved test NDCG@20 by 19.2% and HitRate@20 by 40.2%, while reducing
 Coverage@20 from 84.1% to 38.7%; the full trade-off is reported in the guide.
 
+The next saved baseline combines DeepFM's linear/FM branches with an MMoE deep
+branch. It jointly learns click, like, follow, comment, forward, long-view,
+profile-entry, hate, watch-time, and completion heads, then applies an explicit
+configurable utility policy to the same Week 2 top 100. See the
+[DeepFM + MMoE guide](docs/week3_mmoe.md) for the architecture, exact losses,
+leakage constraints, first-run results, and resume point.
+
+```bash
+OMP_NUM_THREADS=1 kuaiflow mmoe --config configs/week3_mmoe.yaml
+```
+
+Collection is deliberately absent: KuaiRand-Pure has no per-impression
+collection label, and its month-aggregated collection statistics are not safe
+training targets or request-time features.
+
 CLI modes are explicit: `standard` rejects configurations containing `faiss`,
 `faiss` requires a non-empty `faiss` block, and `tradeoff` uses its own fixed
 index matrix and therefore rejects a single-index `faiss` block.
@@ -243,7 +258,8 @@ accounting for the relevant logging propensities.
   ItemCF, and BPR.
 - **Week 2 — Complete:** feature/history-aware two-tower retrieval, controlled
   ablations, and matched exact-versus-FAISS latency evaluation.
-- **Week 3:** DeepFM ranking over the Week 2 top-100 candidates.
+- **Week 3 — In progress:** trained DeepFM and DeepFM + MMoE rankers over the
+  Week 2 top-100 candidates; DIN is the next ablation.
 - **Week 4:** random-exposure bias audit and calibrated evaluation.
 - **Week 5:** diversity-aware reranking, FAISS serving, and final report.
 

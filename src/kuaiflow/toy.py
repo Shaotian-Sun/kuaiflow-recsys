@@ -22,3 +22,41 @@ def make_toy_splits() -> Week1Splits:
     test = pd.DataFrame(test_rows, columns=columns)
     return Week1Splits(train, validation, test, test.copy())
 
+
+def make_multitask_toy_splits() -> Week1Splits:
+    """Add every Week 3 outcome to the tiny deterministic data set.
+
+    This is deliberately separate from :func:`make_toy_splits`: the earlier
+    retrieval and DeepFM examples should keep their small four-column contract.
+    The patterns below give every binary task both classes and exercise zero
+    watch time, missing duration, and replayed viewing.
+    """
+
+    base = make_toy_splits()
+
+    def add_targets(frame: pd.DataFrame, offset: int) -> pd.DataFrame:
+        output = frame.copy()
+        index = pd.Series(range(offset, offset + len(output)), index=output.index)
+        output["is_click"] = (index % 2 == 0).astype(int)
+        output["is_like"] = (index % 3 == 0).astype(int)
+        output["is_follow"] = (index % 4 == 0).astype(int)
+        output["is_comment"] = (index % 3 == 1).astype(int)
+        output["is_forward"] = (index % 4 == 1).astype(int)
+        output["is_hate"] = (index % 5 == 0).astype(int)
+        output["long_view"] = (index % 2 == 1).astype(int)
+        output["is_profile_enter"] = (index % 3 == 2).astype(int)
+
+        watch_pattern = [0, 2_000, 8_000, 25_000, 45_000, 80_000]
+        duration_pattern = [10_000, 10_000, 20_000, 20_000, 40_000, 0]
+        output["play_time_ms"] = [
+            watch_pattern[value % len(watch_pattern)] for value in index
+        ]
+        output["duration_ms"] = [
+            duration_pattern[value % len(duration_pattern)] for value in index
+        ]
+        return output
+
+    train = add_targets(base.train, 0)
+    validation = add_targets(base.validation, len(train))
+    test = add_targets(base.test, len(train) + len(validation))
+    return Week1Splits(train, validation, test, test.copy())
