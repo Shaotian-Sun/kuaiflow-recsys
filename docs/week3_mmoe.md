@@ -1,5 +1,15 @@
 # Week 3 — DeepFM + MMoE Multi-Task Ranking
 
+Week 3 is KuaiFlow's first major end-to-end milestone: chronological logged
+impressions train the ranker, Week 2 retrieves the fixed top 100, and the saved
+DeepFM + MMoE checkpoint scores and reorders those same candidates into the
+final offline recommendation list.
+
+![KuaiFlow Week 3 workflow](../figures/Week_3_workflow_diagram.png)
+
+The complete DeepFM-versus-MMoE experiment tables and milestone summary are in
+the [Week 3 results report](week3_results.md).
+
 ## What changed from the DeepFM baseline
 
 The single-task DeepFM baseline predicts only click. This model keeps DeepFM's
@@ -222,6 +232,8 @@ Over the unchanged test top-100 candidates, retrieval-order click NDCG@20 is
 the composite improves click Recall@20 by 41.8%, HitRate@20 by 43.4%, and
 NDCG@20 by 27.1%. Relative to single-task DeepFM, its NDCG@20 is 6.6% higher.
 
+![KuaiFlow Week 3 fixed-candidate experiment results](../figures/Week_3_experiment_results.png)
+
 The composite also improves like, long-view, and profile-entry ranking, but it
 does not improve every rare action under the neutral weights: follow, comment,
 and forward have only 40, 84, and 33 evaluated candidate users respectively.
@@ -282,6 +294,10 @@ a business utility policy. Changing only the ten utility weights does not requir
 retraining because every head prediction is already present in
 `week3_mmoe_top100.csv.gz`. The current equal-magnitude formula should be kept
 as a baseline, not silently promoted to an optimized policy.
+
+The two Week 3 figures are reproducible from the saved JSON results. Run
+`make week3-figures` to regenerate editable SVG sources and matching PNGs for
+the project website.
 
 The next modeling step is DIN: build a causal user-history sequence using only
 events earlier than each impression, attend that sequence to the candidate

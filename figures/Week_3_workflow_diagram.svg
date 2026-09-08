@@ -1,0 +1,360 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1660" height="948" viewBox="0 0 1660 948" role="img" aria-labelledby="figure-title figure-description">
+<title id="figure-title">KuaiFlow Week 3 DeepFM plus MMoE workflow</title>
+<desc id="figure-description">Six illustrated offline stages lead into a five-step candidate-ranking path that reorders, but does not replace, the Week 2 top 100.</desc>
+<defs>
+              <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+                <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#0B1736" flood-opacity="0.13"/>
+              </filter>
+              <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0B1736" flood-opacity="0.10"/>
+              </filter>
+              <linearGradient id="milestone" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#0B1736"/>
+                <stop offset="0.55" stop-color="#173F73"/>
+                <stop offset="1" stop-color="#087F8C"/>
+              </linearGradient>
+              <linearGradient id="blueHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#0D57A1"/><stop offset="1" stop-color="#2582D3"/>
+              </linearGradient>
+              <linearGradient id="greenHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#08743F"/><stop offset="1" stop-color="#28A56B"/>
+              </linearGradient>
+              <linearGradient id="purpleHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#56369D"/><stop offset="1" stop-color="#8468C9"/>
+              </linearGradient>
+              <linearGradient id="orangeHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#D87D00"/><stop offset="1" stop-color="#F5AA19"/>
+              </linearGradient>
+              <linearGradient id="tealHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#046B76"/><stop offset="1" stop-color="#16A0A8"/>
+              </linearGradient>
+              <linearGradient id="barBlue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#2E85D0"/><stop offset="1" stop-color="#0758A3"/>
+              </linearGradient>
+              <linearGradient id="barOrange" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#FDB31A"/><stop offset="1" stop-color="#E08200"/>
+              </linearGradient>
+              <linearGradient id="barTeal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#24A8AE"/><stop offset="1" stop-color="#05717F"/>
+              </linearGradient>
+              <linearGradient id="barPurple" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#9B7BD0"/><stop offset="1" stop-color="#6242A9"/>
+              </linearGradient>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#111827"/>
+              </marker>
+              <style>
+                text { font-family: Inter, Arial, Helvetica, sans-serif; }
+              </style>
+            </defs>
+<rect x="0" y="0" width="1660" height="948" rx="0" fill="#FCFCFD" stroke="none" stroke-width="1" opacity="1"/>
+<text x="830" y="47" font-size="38" fill="#0B1736" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">KuaiFlow Week 3 — DeepFM + MMoE Multi-Task Ranking</text>
+<text x="830" y="77" font-size="17" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">One measured path from chronological logs to a multi-objective top-100 order</text>
+<rect x="46" y="88" width="205" height="34" rx="17" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="148" y="111" font-size="16" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">OFFLINE TRAINING</text>
+<line x1="267" y1="105" x2="1614" y2="105" stroke="#AEB9C8" stroke-width="1.5" stroke-dasharray="7 7"/>
+<rect x="46" y="134" width="226" height="386" rx="13" fill="white" stroke="#1769B0" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<path d="M 59 134 H 259 Q 272 134 272 147 V 192 H 46 V 147 Q 46 134 59 134 Z" fill="url(#blueHeader)"/>
+<text x="159.0" y="171" font-size="20" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">1. Time-split data</text>
+<rect x="288" y="134" width="230" height="386" rx="13" fill="white" stroke="#148A55" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<path d="M 301 134 H 505 Q 518 134 518 147 V 192 H 288 V 147 Q 288 134 301 134 Z" fill="url(#greenHeader)"/>
+<text x="403.0" y="171" font-size="20" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">2. Safe inputs</text>
+<rect x="534" y="134" width="250" height="386" rx="13" fill="white" stroke="#6A4CAF" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<path d="M 547 134 H 771 Q 784 134 784 147 V 192 H 534 V 147 Q 534 134 547 134 Z" fill="url(#purpleHeader)"/>
+<text x="659.0" y="171" font-size="20" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">3. DeepFM backbone</text>
+<rect x="800" y="134" width="268" height="386" rx="13" fill="white" stroke="#ED9700" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<path d="M 813 134 H 1055 Q 1068 134 1068 147 V 192 H 800 V 147 Q 800 134 813 134 Z" fill="url(#orangeHeader)"/>
+<text x="934.0" y="171" font-size="20" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">4. MMoE routing</text>
+<rect x="1084" y="134" width="250" height="386" rx="13" fill="white" stroke="#087F8C" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<path d="M 1097 134 H 1321 Q 1334 134 1334 147 V 192 H 1084 V 147 Q 1084 134 1097 134 Z" fill="url(#tealHeader)"/>
+<text x="1209.0" y="171" font-size="20" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">5. Ten objectives</text>
+<rect x="1350" y="134" width="264" height="386" rx="13" fill="white" stroke="#148A55" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<path d="M 1363 134 H 1601 Q 1614 134 1614 147 V 192 H 1350 V 147 Q 1350 134 1363 134 Z" fill="url(#greenHeader)"/>
+<text x="1482.0" y="171" font-size="20" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">6. Train + verify</text>
+<rect x="132.48" y="210.82" width="53.04" height="48.36" rx="3" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<ellipse cx="159" cy="210.82" rx="26.52" ry="11.700000000000001" fill="#FFFFFF" stroke="#1769B0" stroke-width="3"/>
+<path d="M 132.48 203.79999999999998 Q 159 216.27999999999997 185.52 203.79999999999998" fill="none" stroke="#FFFFFF" stroke-width="2.34" opacity="0.92"/>
+<path d="M 132.48 219.4 Q 159 231.88 185.52 219.4" fill="none" stroke="#FFFFFF" stroke-width="2.34" opacity="0.92"/>
+<path d="M 132.48 235.0 Q 159 247.48 185.52 235.0" fill="none" stroke="#FFFFFF" stroke-width="2.34" opacity="0.92"/>
+<text x="159" y="291" font-size="15" fill="#1769B0" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">1.14M train rows</text>
+<line x1="83" y1="340" x2="235" y2="340" stroke="#9AB8DA" stroke-width="7"/>
+<circle cx="88" cy="340" r="13" fill="white" stroke="#1769B0" stroke-width="4"/>
+<text x="88" y="372" font-size="12.5" fill="#1769B0" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">TRAIN</text>
+<circle cx="166" cy="340" r="13" fill="white" stroke="#087F8C" stroke-width="4"/>
+<text x="166" y="372" font-size="12.5" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">VAL</text>
+<circle cx="230" cy="340" r="13" fill="white" stroke="#6A4CAF" stroke-width="4"/>
+<text x="230" y="372" font-size="12.5" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">TEST</text>
+<text x="159" y="413" font-size="16" fill="#0B1736" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">past  →  future</text>
+<text x="159" y="443" font-size="13.5" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">strict chronological split</text>
+<rect x="77" y="469" width="164" height="30" rx="15" fill="#EBF4FF" stroke="#1769B0" stroke-width="1" opacity="1"/>
+<text x="159" y="490" font-size="13" fill="#1769B0" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">candidates ≠ labels</text>
+<circle cx="350" cy="218.16" r="10.08" fill="#148A55" stroke="none" stroke-width="1"/>
+<path d="M 329.84 254.16 Q 332.0 233.28 350 233.28 Q 368.0 233.28 370.16 254.16 Z" fill="#148A55"/>
+<text x="403" y="244" font-size="31" fill="#93A4B6" font-weight="500" text-anchor="middle" font-style="normal" letter-spacing="0">+</text>
+<rect x="434.08" y="213.84" width="51.839999999999996" height="40.32" rx="8" fill="white" stroke="#148A55" stroke-width="3" opacity="1"/>
+<polygon points="454.24,223.92 454.24,244.08 472.24,234" fill="#148A55" stroke="none" stroke-width="1"/>
+<rect x="281" y="286" width="74" height="30" rx="15" fill="#EAF8F0" stroke="#148A55" stroke-width="1" opacity="1"/>
+<text x="318" y="306" font-size="11.5" fill="#148A55" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">USER</text>
+<rect x="366" y="286" width="74" height="30" rx="15" fill="#EAF8F0" stroke="#148A55" stroke-width="1" opacity="1"/>
+<text x="403" y="306" font-size="11.5" fill="#148A55" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">VIDEO</text>
+<rect x="324" y="326" width="74" height="30" rx="15" fill="#EAF8F0" stroke="#148A55" stroke-width="1" opacity="1"/>
+<text x="361" y="346" font-size="11.5" fill="#148A55" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">CONTEXT</text>
+<rect x="409" y="326" width="74" height="30" rx="15" fill="#EAF8F0" stroke="#148A55" stroke-width="1" opacity="1"/>
+<text x="446" y="346" font-size="11.5" fill="#148A55" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">META</text>
+<path d="M 350 404.0 L 364.0 410.0 V 422.0 Q 362.5 435.0 350 440.5 Q 337.5 435.0 336.0 422.0 V 410.0 Z" fill="white" stroke="#148A55" stroke-width="1.5"/>
+<path d="M 343.5 421.5 L 348.5 427.0 L 358.0 416.0" fill="none" stroke="#148A55" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="397" y="402" font-size="13.5" fill="#0B1736" font-weight="800" text-anchor="start" font-style="normal" letter-spacing="0">train-fit only</text>
+<text x="397" y="425" font-size="13.5" fill="#0B1736" font-weight="800" text-anchor="start" font-style="normal" letter-spacing="0">10 request-time fields</text>
+<rect x="316" y="469" width="174" height="30" rx="15" fill="#FFF2F1" stroke="#E53935" stroke-width="1" opacity="1"/>
+<text x="403" y="490" font-size="12.5" fill="#E53935" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">no outcomes · no score</text>
+<rect x="557" y="205" width="28" height="24" rx="5" fill="#EBF4FF" stroke="#1769B0" stroke-width="1" opacity="1"/>
+<rect x="596" y="205" width="28" height="24" rx="5" fill="#EAF8F0" stroke="#148A55" stroke-width="1" opacity="1"/>
+<rect x="635" y="205" width="28" height="24" rx="5" fill="#FFF6E3" stroke="#ED9700" stroke-width="1" opacity="1"/>
+<rect x="674" y="205" width="28" height="24" rx="5" fill="#E9F7F8" stroke="#087F8C" stroke-width="1" opacity="1"/>
+<rect x="713" y="205" width="28" height="24" rx="5" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<circle cx="571" cy="267" r="6" fill="#1769B0" stroke="none" stroke-width="1"/>
+<circle cx="610" cy="267" r="6" fill="#148A55" stroke="none" stroke-width="1"/>
+<circle cx="649" cy="267" r="6" fill="#ED9700" stroke="none" stroke-width="1"/>
+<circle cx="688" cy="267" r="6" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="727" cy="267" r="6" fill="#6A4CAF" stroke="none" stroke-width="1"/>
+<circle cx="571" cy="292" r="6" fill="#1769B0" stroke="none" stroke-width="1"/>
+<circle cx="610" cy="292" r="6" fill="#148A55" stroke="none" stroke-width="1"/>
+<circle cx="649" cy="292" r="6" fill="#ED9700" stroke="none" stroke-width="1"/>
+<circle cx="688" cy="292" r="6" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="727" cy="292" r="6" fill="#6A4CAF" stroke="none" stroke-width="1"/>
+<circle cx="571" cy="317" r="6" fill="#1769B0" stroke="none" stroke-width="1"/>
+<circle cx="610" cy="317" r="6" fill="#148A55" stroke="none" stroke-width="1"/>
+<circle cx="649" cy="317" r="6" fill="#ED9700" stroke="none" stroke-width="1"/>
+<circle cx="688" cy="317" r="6" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="727" cy="317" r="6" fill="#6A4CAF" stroke="none" stroke-width="1"/>
+<text x="659" y="337" font-size="13.5" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">shared embeddings</text>
+<line x1="659" y1="348" x2="601" y2="381" stroke="#6A4CAF" stroke-width="2"/>
+<line x1="659" y1="348" x2="717" y2="381" stroke="#6A4CAF" stroke-width="2"/>
+<circle cx="600" cy="401" r="29" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="2"/>
+<text x="600" y="408" font-size="15" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">Σwx</text>
+<circle cx="699" cy="384" r="6" fill="#6A4CAF" stroke="none" stroke-width="1"/>
+<circle cx="727" cy="384" r="6" fill="#6A4CAF" stroke="none" stroke-width="1"/>
+<circle cx="699" cy="417" r="6" fill="#6A4CAF" stroke="none" stroke-width="1"/>
+<circle cx="727" cy="417" r="6" fill="#6A4CAF" stroke="none" stroke-width="1"/>
+<line x1="699" y1="384" x2="727" y2="384" stroke="#9A83CF" stroke-width="1.5"/>
+<line x1="699" y1="384" x2="699" y2="417" stroke="#9A83CF" stroke-width="1.5"/>
+<line x1="727" y1="384" x2="727" y2="417" stroke="#9A83CF" stroke-width="1.5"/>
+<line x1="699" y1="417" x2="727" y2="417" stroke="#9A83CF" stroke-width="1.5"/>
+<line x1="699" y1="384" x2="727" y2="417" stroke="#9A83CF" stroke-width="1.5"/>
+<text x="713" y="448" font-size="13" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">FM pairs</text>
+<line x1="600" y1="434" x2="639" y2="470" stroke="#6A4CAF" stroke-width="2"/>
+<line x1="713" y1="454" x2="679" y2="470" stroke="#6A4CAF" stroke-width="2"/>
+<circle cx="659" cy="480" r="18" fill="#6A4CAF" stroke="none" stroke-width="1"/>
+<text x="659" y="487" font-size="20" fill="white" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">+</text>
+<rect x="829" y="196" width="210" height="31" rx="16" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<text x="934" y="217" font-size="12.5" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">shared DeepFM vector</text>
+<rect x="816.0" y="250" width="44" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<rect x="821.0" y="273" width="34" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<rect x="826.0" y="296" width="24" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<text x="838" y="337" font-size="12" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">E1</text>
+<line x1="934" y1="229" x2="838" y2="247" stroke="#B19DDA" stroke-width="1.4"/>
+<rect x="880.0" y="250" width="44" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<rect x="885.0" y="273" width="34" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<rect x="890.0" y="296" width="24" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<text x="902" y="337" font-size="12" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">E2</text>
+<line x1="934" y1="229" x2="902" y2="247" stroke="#B19DDA" stroke-width="1.4"/>
+<rect x="944.0" y="250" width="44" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<rect x="949.0" y="273" width="34" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<rect x="954.0" y="296" width="24" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<text x="966" y="337" font-size="12" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">E3</text>
+<line x1="934" y1="229" x2="966" y2="247" stroke="#B19DDA" stroke-width="1.4"/>
+<rect x="1008.0" y="250" width="44" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<rect x="1013.0" y="273" width="34" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<rect x="1018.0" y="296" width="24" height="15" rx="4" fill="#E7DFF8" stroke="#6A4CAF" stroke-width="1" opacity="1"/>
+<text x="1030" y="337" font-size="12" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">E4</text>
+<line x1="934" y1="229" x2="1030" y2="247" stroke="#B19DDA" stroke-width="1.4"/>
+<rect x="824" y="355" width="220" height="32" rx="16" fill="#FFF1D3" stroke="#ED9700" stroke-width="1" opacity="1"/>
+<text x="934" y="377" font-size="13" fill="#9A6200" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">10 softmax gates</text>
+<line x1="838" y1="341" x2="934" y2="355" stroke="#ED9700" stroke-width="1.3"/>
+<line x1="902" y1="341" x2="934" y2="355" stroke="#ED9700" stroke-width="1.3"/>
+<line x1="966" y1="341" x2="934" y2="355" stroke="#ED9700" stroke-width="1.3"/>
+<line x1="1030" y1="341" x2="934" y2="355" stroke="#ED9700" stroke-width="1.3"/>
+<circle cx="843" cy="413" r="14" fill="#E9F7F8" stroke="#087F8C" stroke-width="1.5"/>
+<text x="843" y="417" font-size="9.5" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">1</text>
+<text x="843" y="438" font-size="9.5" fill="#087F8C" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">click</text>
+<circle cx="888" cy="413" r="14" fill="#E9F7F8" stroke="#087F8C" stroke-width="1.5"/>
+<text x="888" y="417" font-size="9.5" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">2</text>
+<text x="888" y="438" font-size="9.5" fill="#087F8C" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">like</text>
+<circle cx="933" cy="413" r="14" fill="#E9F7F8" stroke="#087F8C" stroke-width="1.5"/>
+<text x="933" y="417" font-size="9.5" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">3</text>
+<text x="933" y="438" font-size="9.5" fill="#087F8C" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">follow</text>
+<circle cx="978" cy="413" r="14" fill="#E9F7F8" stroke="#087F8C" stroke-width="1.5"/>
+<text x="978" y="417" font-size="9.5" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">4</text>
+<text x="978" y="438" font-size="9.5" fill="#087F8C" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">comment</text>
+<circle cx="1023" cy="413" r="14" fill="#E9F7F8" stroke="#087F8C" stroke-width="1.5"/>
+<text x="1023" y="417" font-size="9.5" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">5</text>
+<text x="1023" y="438" font-size="9.5" fill="#087F8C" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">forward</text>
+<circle cx="843" cy="456" r="14" fill="#E9F7F8" stroke="#087F8C" stroke-width="1.5"/>
+<text x="843" y="460" font-size="9.5" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">6</text>
+<text x="843" y="481" font-size="9.5" fill="#087F8C" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">long</text>
+<circle cx="888" cy="456" r="14" fill="#E9F7F8" stroke="#087F8C" stroke-width="1.5"/>
+<text x="888" y="460" font-size="9.5" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">7</text>
+<text x="888" y="481" font-size="9.5" fill="#087F8C" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">profile</text>
+<circle cx="933" cy="456" r="14" fill="#F3F5F8" stroke="#E53935" stroke-width="1.5"/>
+<text x="933" y="460" font-size="9.5" fill="#E53935" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">8</text>
+<text x="933" y="481" font-size="9.5" fill="#E53935" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">hate</text>
+<circle cx="978" cy="456" r="14" fill="#FFF6E3" stroke="#ED9700" stroke-width="1.5"/>
+<text x="978" y="460" font-size="9.5" fill="#ED9700" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">9</text>
+<text x="978" y="481" font-size="9.5" fill="#ED9700" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">time</text>
+<circle cx="1023" cy="456" r="14" fill="#FFF6E3" stroke="#ED9700" stroke-width="1.5"/>
+<text x="1023" y="460" font-size="9.5" fill="#ED9700" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">10</text>
+<text x="1023" y="481" font-size="9.5" fill="#ED9700" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">finish</text>
+<text x="934" y="501" font-size="13.5" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">share  +  specialize</text>
+<circle cx="1141" cy="238" r="17.98" fill="white" stroke="#087F8C" stroke-width="3"/>
+<circle cx="1141" cy="238" r="11.6" fill="white" stroke="#087F8C" stroke-width="3"/>
+<circle cx="1141" cy="238" r="5.22" fill="white" stroke="#087F8C" stroke-width="3"/>
+<line x1="1142.74" y1="236.26" x2="1162.46" y2="216.54" stroke="#087F8C" stroke-width="4"/>
+<polygon points="1162.46,216.54 1154.92,218.28 1160.72,224.08" fill="#087F8C" stroke="none" stroke-width="1"/>
+<text x="1233" y="225" font-size="15" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">8 action</text>
+<text x="1233" y="247" font-size="13" fill="#526078" font-weight="700" text-anchor="middle" font-style="normal" letter-spacing="0">probabilities</text>
+<circle cx="1144" cy="327" r="27" fill="#FFF6E3" stroke="#ED9700" stroke-width="2.5"/>
+<line x1="1144" y1="327" x2="1144" y2="310" stroke="#ED9700" stroke-width="3"/>
+<line x1="1144" y1="327" x2="1158" y2="336" stroke="#ED9700" stroke-width="3"/>
+<circle cx="1246" cy="327" r="27" fill="#EBF4FF" stroke="#1769B0" stroke-width="2.5"/>
+<path d="M 1229 336 A 20 20 0 0 1 1262 312" fill="none" stroke="#1769B0" stroke-width="5"/>
+<text x="1144" y="371" font-size="12.5" fill="#ED9700" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">watch time</text>
+<text x="1246" y="371" font-size="12.5" fill="#1769B0" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">completion</text>
+<line x1="1132" y1="420" x2="1286" y2="420" stroke="#087F8C" stroke-width="4"/>
+<polygon points="1209,420 1189,457 1229,457" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="1140.0" cy="408" r="5.5" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="1155.5" cy="399" r="5.5" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="1171.0" cy="408" r="5.5" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="1186.5" cy="399" r="5.5" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="1202.0" cy="408" r="5.5" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="1217.5" cy="399" r="5.5" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="1233.0" cy="408" r="5.5" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="1248.5" cy="399" r="5.5" fill="#087F8C" stroke="none" stroke-width="1"/>
+<circle cx="1264.0" cy="408" r="5.5" fill="#ED9700" stroke="none" stroke-width="1"/>
+<circle cx="1279.5" cy="399" r="5.5" fill="#ED9700" stroke="none" stroke-width="1"/>
+<text x="1209" y="482" font-size="14" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">10 normalized losses</text>
+<text x="1209" y="503" font-size="12.5" fill="#E53935" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">collection excluded</text>
+<path d="M 1406.0 213.96 H 1442.0 V 229.8 Q 1438.4 247.8 1424 249.96 Q 1409.6 247.8 1406.0 229.8 Z" fill="#148A55"/>
+<path d="M 1406.0 221.16 H 1393.76 Q 1395.2 238.44 1409.6 239.88 M 1442.0 221.16 H 1454.24 Q 1452.8 238.44 1438.4 239.88" fill="none" stroke="#148A55" stroke-width="4.32"/>
+<rect x="1420.4" y="248.52" width="7.199999999999999" height="14.399999999999999" rx="2" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="1406.0" y="261.48" width="36.0" height="6.4799999999999995" rx="4" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<path d="M 1536 218.28 L 1552.24 225.24 V 239.16 Q 1550.5 254.24 1536 260.62 Q 1521.5 254.24 1519.76 239.16 V 225.24 Z" fill="white" stroke="#087F8C" stroke-width="1.7399999999999998"/>
+<path d="M 1528.46 238.58 L 1534.26 244.96 L 1545.28 232.2" fill="none" stroke="#087F8C" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1482" y="302" font-size="14" fill="#0B1736" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">best epoch 2  ·  34 tests</text>
+<rect x="1375" y="329" width="214" height="43" rx="9" fill="#EBF4FF" stroke="#1769B0" stroke-width="1.4" opacity="1"/>
+<text x="1437" y="356" font-size="18" fill="#1769B0" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">+41.8%</text>
+<text x="1548" y="356" font-size="11.5" fill="#0B1736" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">RECALL</text>
+<rect x="1375" y="382" width="214" height="43" rx="9" fill="#EAF8F0" stroke="#148A55" stroke-width="1.4" opacity="1"/>
+<text x="1437" y="409" font-size="18" fill="#148A55" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">+43.4%</text>
+<text x="1548" y="409" font-size="11.5" fill="#0B1736" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">HIT RATE</text>
+<rect x="1375" y="435" width="214" height="43" rx="9" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="1.4" opacity="1"/>
+<text x="1437" y="462" font-size="18" fill="#6A4CAF" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">+27.1%</text>
+<text x="1548" y="462" font-size="11.5" fill="#0B1736" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">NDCG</text>
+<text x="1482" y="501" font-size="12.5" fill="#526078" font-weight="700" text-anchor="middle" font-style="normal" letter-spacing="0">composite vs Week 2 retrieval</text>
+<line x1="274" y1="326" x2="284" y2="326" stroke="#111827" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="520" y1="326" x2="530" y2="326" stroke="#111827" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="786" y1="326" x2="796" y2="326" stroke="#111827" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="1070" y1="326" x2="1080" y2="326" stroke="#111827" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="1336" y1="326" x2="1346" y2="326" stroke="#111827" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="46" y="545" width="205" height="34" rx="17" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="148" y="568" font-size="16" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">CANDIDATE RANKING</text>
+<line x1="267" y1="562" x2="1614" y2="562" stroke="#AEB9C8" stroke-width="1.5" stroke-dasharray="7 7"/>
+<rect x="46" y="591" width="237" height="167" rx="11" fill="white" stroke="#1769B0" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<rect x="46" y="591" width="237" height="40" rx="11" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="46" y="620" width="237" height="11" rx="0" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="164.5" y="618" font-size="16" fill="white" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">1. User request</text>
+<rect x="299" y="591" width="252" height="167" rx="11" fill="white" stroke="#148A55" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<rect x="299" y="591" width="252" height="40" rx="11" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="299" y="620" width="252" height="11" rx="0" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="425.0" y="618" font-size="16" fill="white" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">2. Retrieve 100</text>
+<rect x="567" y="591" width="252" height="167" rx="11" fill="white" stroke="#6A4CAF" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<rect x="567" y="591" width="252" height="40" rx="11" fill="#6A4CAF" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="567" y="620" width="252" height="11" rx="0" fill="#6A4CAF" stroke="none" stroke-width="1" opacity="1"/>
+<text x="693.0" y="618" font-size="16" fill="white" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">3. Ten predictions</text>
+<rect x="835" y="591" width="252" height="167" rx="11" fill="white" stroke="#ED9700" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<rect x="835" y="591" width="252" height="40" rx="11" fill="#ED9700" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="835" y="620" width="252" height="11" rx="0" fill="#ED9700" stroke="none" stroke-width="1" opacity="1"/>
+<text x="961.0" y="618" font-size="16" fill="white" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">4. Utility blend</text>
+<rect x="1103" y="591" width="511" height="167" rx="11" fill="white" stroke="#087F8C" stroke-width="1.5" opacity="1" filter="url(#shadow)"/>
+<rect x="1103" y="591" width="511" height="40" rx="11" fill="#087F8C" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="1103" y="620" width="511" height="11" rx="0" fill="#087F8C" stroke="none" stroke-width="1" opacity="1"/>
+<text x="1358.5" y="618" font-size="16" fill="white" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">5. Reorder the same 100</text>
+<circle cx="164" cy="668.28" r="10.64" fill="#1769B0" stroke="none" stroke-width="1"/>
+<path d="M 142.72 706.28 Q 145.0 684.24 164 684.24 Q 183.0 684.24 185.28 706.28 Z" fill="#1769B0"/>
+<text x="164" y="742" font-size="13" fill="#0B1736" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">ID + live context</text>
+<rect x="368.3" y="664.95" width="37.400000000000006" height="34.1" rx="3" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<ellipse cx="387" cy="664.95" rx="18.700000000000003" ry="8.25" fill="#FFFFFF" stroke="#148A55" stroke-width="3"/>
+<path d="M 368.3 660.0 Q 387 668.8 405.7 660.0" fill="none" stroke="#FFFFFF" stroke-width="1.6500000000000001" opacity="0.92"/>
+<path d="M 368.3 671.0 Q 387 679.8 405.7 671.0" fill="none" stroke="#FFFFFF" stroke-width="1.6500000000000001" opacity="0.92"/>
+<path d="M 368.3 682.0 Q 387 690.8 405.7 682.0" fill="none" stroke="#FFFFFF" stroke-width="1.6500000000000001" opacity="0.92"/>
+<circle cx="465" cy="684" r="25" fill="white" stroke="#148A55" stroke-width="3"/>
+<line x1="483" y1="702" x2="501" y2="720" stroke="#148A55" stroke-width="5"/>
+<text x="425" y="742" font-size="12.5" fill="#0B1736" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">Week 2 two-tower + FAISS</text>
+<circle cx="606" cy="666" r="14" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="2"/>
+<circle cx="649" cy="666" r="14" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="2"/>
+<circle cx="692" cy="666" r="14" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="2"/>
+<circle cx="735" cy="666" r="14" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="2"/>
+<circle cx="778" cy="666" r="14" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="2"/>
+<circle cx="606" cy="706" r="14" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="2"/>
+<circle cx="649" cy="706" r="14" fill="#F2EEFB" stroke="#6A4CAF" stroke-width="2"/>
+<circle cx="692" cy="706" r="14" fill="#F3F5F8" stroke="#E53935" stroke-width="2"/>
+<circle cx="735" cy="706" r="14" fill="#FFF6E3" stroke="#ED9700" stroke-width="2"/>
+<circle cx="778" cy="706" r="14" fill="#FFF6E3" stroke="#ED9700" stroke-width="2"/>
+<text x="693" y="742" font-size="12.5" fill="#0B1736" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">8 actions + time + finish</text>
+<line x1="938.68" y1="660.36" x2="938.68" y2="713.64" stroke="#ED9700" stroke-width="4"/>
+<circle cx="938.68" cy="677.64" r="6.4799999999999995" fill="white" stroke="#ED9700" stroke-width="3"/>
+<line x1="961.0" y1="660.36" x2="961.0" y2="713.64" stroke="#ED9700" stroke-width="4"/>
+<circle cx="961.0" cy="697.8" r="6.4799999999999995" fill="white" stroke="#ED9700" stroke-width="3"/>
+<line x1="983.32" y1="660.36" x2="983.32" y2="713.64" stroke="#ED9700" stroke-width="4"/>
+<circle cx="983.32" cy="684.12" r="6.4799999999999995" fill="white" stroke="#ED9700" stroke-width="3"/>
+<text x="961" y="742" font-size="12.5" fill="#0B1736" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">positive signals − hate</text>
+<rect x="1162.96" y="656.76" width="21.599999999999998" height="17.28" rx="5" fill="white" stroke="#1769B0" stroke-width="2" opacity="1"/>
+<polygon points="1170.16,660.36 1170.16,670.4399999999999 1178.8,665.4" fill="#1769B0" stroke="none" stroke-width="1"/>
+<rect x="1193.2" y="656.76" width="21.599999999999998" height="17.28" rx="5" fill="white" stroke="#1769B0" stroke-width="2" opacity="1"/>
+<polygon points="1200.4,660.36 1200.4,670.4399999999999 1209.04,665.4" fill="#1769B0" stroke="none" stroke-width="1"/>
+<rect x="1223.44" y="656.76" width="21.599999999999998" height="17.28" rx="5" fill="white" stroke="#1769B0" stroke-width="2" opacity="1"/>
+<polygon points="1230.64,660.36 1230.64,670.4399999999999 1239.28,665.4" fill="#1769B0" stroke="none" stroke-width="1"/>
+<rect x="1162.96" y="690.6" width="21.599999999999998" height="17.28" rx="5" fill="white" stroke="#1769B0" stroke-width="2" opacity="1"/>
+<polygon points="1170.16,694.2 1170.16,704.28 1178.8,699.24" fill="#1769B0" stroke="none" stroke-width="1"/>
+<rect x="1193.2" y="690.6" width="21.599999999999998" height="17.28" rx="5" fill="white" stroke="#1769B0" stroke-width="2" opacity="1"/>
+<polygon points="1200.4,694.2 1200.4,704.28 1209.04,699.24" fill="#1769B0" stroke="none" stroke-width="1"/>
+<rect x="1223.44" y="690.6" width="21.599999999999998" height="17.28" rx="5" fill="white" stroke="#1769B0" stroke-width="2" opacity="1"/>
+<polygon points="1230.64,694.2 1230.64,704.28 1239.28,699.24" fill="#1769B0" stroke="none" stroke-width="1"/>
+<line x1="1270" y1="687" x2="1327" y2="687" stroke="#0B1736" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="1407.76" y="653.04" width="60.48" height="20.16" rx="7" fill="white" stroke="#087F8C" stroke-width="2" opacity="1"/>
+<circle cx="1418.56" cy="663.12" r="7.199999999999999" fill="#087F8C" stroke="none" stroke-width="1"/>
+<text x="1418.56" y="666.7199999999999" font-size="7.92" fill="white" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">1</text>
+<rect x="1430.8" y="659.52" width="30.959999999999997" height="2.88" rx="2" fill="#087F8C" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="1430.8" y="665.28" width="24.48" height="2.16" rx="1.5" fill="#9EB2C8" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="1412.08" y="678.9599999999999" width="51.839999999999996" height="20.16" rx="7" fill="white" stroke="#087F8C" stroke-width="2" opacity="1"/>
+<circle cx="1422.8799999999999" cy="689.04" r="7.199999999999999" fill="#087F8C" stroke="none" stroke-width="1"/>
+<text x="1422.8799999999999" y="692.6399999999999" font-size="7.92" fill="white" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">2</text>
+<rect x="1435.12" y="685.4399999999999" width="22.32" height="2.88" rx="2" fill="#087F8C" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="1435.12" y="691.1999999999999" width="15.84" height="2.16" rx="1.5" fill="#9EB2C8" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="1416.4" y="704.88" width="43.199999999999996" height="20.16" rx="7" fill="white" stroke="#087F8C" stroke-width="2" opacity="1"/>
+<circle cx="1427.2" cy="714.96" r="7.199999999999999" fill="#087F8C" stroke="none" stroke-width="1"/>
+<text x="1427.2" y="718.56" font-size="7.92" fill="white" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">3</text>
+<rect x="1439.44" y="711.36" width="13.68" height="2.88" rx="2" fill="#087F8C" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="1439.44" y="717.12" width="7.199999999999999" height="2.16" rx="1.5" fill="#9EB2C8" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="1495" y="648" width="91" height="54" rx="27" fill="#EAF8F0" stroke="#148A55" stroke-width="2" opacity="1"/>
+<text x="1540" y="671" font-size="11.5" fill="#148A55" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">SAME</text>
+<text x="1540" y="688" font-size="12.5" fill="#148A55" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">100 IDs</text>
+<text x="1358" y="742" font-size="13.5" fill="#087F8C" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">membership fixed  ·  order changes</text>
+<line x1="285" y1="675" x2="295" y2="675" stroke="#111827" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="553" y1="675" x2="563" y2="675" stroke="#111827" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="821" y1="675" x2="831" y2="675" stroke="#111827" stroke-width="2.2" marker-end="url(#arrow)"/>
+<line x1="1089" y1="675" x2="1099" y2="675" stroke="#111827" stroke-width="2.2" marker-end="url(#arrow)"/>
+<rect x="46" y="789" width="1568" height="111" rx="18" fill="url(#milestone)" stroke="none" stroke-width="1" opacity="1" filter="url(#shadow)"/>
+<circle cx="101" cy="844" r="35" fill="white" stroke="#77E0C1" stroke-width="3"/>
+<text x="101" y="855" font-size="34" fill="#148A55" font-weight="900" text-anchor="middle" font-style="normal" letter-spacing="0">✓</text>
+<text x="157" y="827" font-size="16" fill="#78E1C2" font-weight="900" text-anchor="start" font-style="normal" letter-spacing="1.1">MAJOR MILESTONE</text>
+<text x="157" y="856" font-size="25" fill="white" font-weight="900" text-anchor="start" font-style="normal" letter-spacing="0">First measured logs → retrieval → multi-task ranking → final list</text>
+<text x="157" y="882" font-size="14.5" fill="#DDEBFF" font-weight="600" text-anchor="start" font-style="normal" letter-spacing="0">DeepFM + MMoE scores 1M rows across validation and test</text>
+<rect x="1119" y="821" width="144" height="47" rx="24" fill="#FFFFFF" stroke="#A6EADB" stroke-width="1" opacity="0.12"/>
+<text x="1191" y="850" font-size="12.5" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">chronological ✓</text>
+<rect x="1288" y="821" width="144" height="47" rx="24" fill="#FFFFFF" stroke="#A6EADB" stroke-width="1" opacity="0.12"/>
+<text x="1360" y="850" font-size="12.5" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">same top-100 ✓</text>
+<rect x="1450" y="821" width="144" height="47" rx="24" fill="#FFFFFF" stroke="#A6EADB" stroke-width="1" opacity="0.12"/>
+<text x="1522" y="850" font-size="12.5" fill="white" font-weight="800" text-anchor="middle" font-style="normal" letter-spacing="0">finite scores ✓</text>
+<text x="1610" y="932" font-size="13" fill="#526078" font-weight="400" text-anchor="end" font-style="italic" letter-spacing="0">Week 3 · DeepFM + MMoE</text>
+</svg>

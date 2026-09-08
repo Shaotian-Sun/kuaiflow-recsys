@@ -1,4 +1,4 @@
-.PHONY: install test demo download prepare benchmark deepfm mmoe
+.PHONY: install test demo download prepare benchmark deepfm mmoe week3-figures
 
 install:
 	python -m pip install -e .
@@ -23,3 +23,6 @@ deepfm:
 
 mmoe:
 	python -m kuaiflow.cli mmoe --config configs/week3_mmoe.yaml
+
+week3-figures:
+	python -m kuaiflow.week3_figures

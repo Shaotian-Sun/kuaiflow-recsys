@@ -26,6 +26,8 @@ and Bayesian Personalized Ranking (BPR) baselines.
 - BPR matrix factorization implemented from scratch in NumPy.
 - Feature- and history-aware two-tower retrieval.
 - Exact and FAISS approximate-nearest-neighbor retrieval evaluation.
+- Single-task DeepFM click ranking over fixed retrieved candidates.
+- DeepFM + MMoE ranking with eight action targets, watch time, and completion.
 - Recall@K, HitRate@K, NDCG@K, and catalog coverage.
 - Explicit novel-item, warm-start evaluation rather than mixing in impossible
   cold-start targets.
@@ -45,13 +47,17 @@ tests/                    Unit and smoke tests
 ## Project milestones
 
 The work is organized as a sequence of milestones. Week 1 establishes the data,
-evaluation, and baseline foundation. Week 2 builds on that foundation with
-learned retrieval and scalable nearest-neighbor search.
+evaluation, and baseline foundation. Week 2 builds learned retrieval and
+scalable nearest-neighbor search. Week 3 reaches the first major end-to-end
+milestone by connecting those candidates to trained ranking models.
 
 1. **Week 1 — Recommendation baselines:** chronological data preparation,
    warm-start evaluation, Popularity, ItemCF, and BPR.
 2. **Week 2 — Two-tower retrieval:** feature and history ablations, followed by
    exact-versus-FAISS latency and fidelity evaluation.
+3. **Week 3 — DeepFM + MMoE ranking:** ten jointly trained objectives and a
+   measured fixed-candidate retrieval-to-ranking handoff. See the
+   [full Week 3 experimental report](docs/week3_results.md).
 
 ## Week 1 — Recommendation baselines
 
@@ -195,7 +201,21 @@ the YAML configuration to control the benchmark. `OMP_NUM_THREADS=1` makes CPU
 threading explicit and reproducible; use the same value whenever comparing
 results from different runs.
 
-## Week 3 — DeepFM ranking
+## Week 3 — DeepFM + MMoE multi-task ranking
+
+### Major milestone — first end-to-end result
+
+KuaiFlow now runs one measured offline path from chronological impressions,
+through Week 2 two-tower/FAISS top-100 retrieval, into DeepFM + MMoE scoring and
+a final multi-objective top-100 order. The ranker preserves candidate membership:
+it improves the order of the 100 retrieved videos but cannot recover a video the
+retriever missed.
+
+![KuaiFlow Week 3 end-to-end ranking results](figures/Week_3_experiment_results.png)
+
+See the [full Week 3 experimental report](docs/week3_results.md) for the
+workflow, evaluation protocol, pointwise and candidate-ranking results,
+multi-objective analysis, coverage trade-off, and limitations.
 
 Week 3 starts with a standalone DeepFM click model. It trains on logged
 impressions, then scores and reorders the selected Week 2 top-100 candidates
@@ -216,11 +236,19 @@ The next saved baseline combines DeepFM's linear/FM branches with an MMoE deep
 branch. It jointly learns click, like, follow, comment, forward, long-view,
 profile-entry, hate, watch-time, and completion heads, then applies an explicit
 configurable utility policy to the same Week 2 top 100. See the
-[DeepFM + MMoE guide](docs/week3_mmoe.md) for the architecture, exact losses,
-leakage constraints, first-run results, and resume point.
+[DeepFM + MMoE guide](docs/week3_mmoe.md) for the architecture and exact losses,
+or the [Week 3 results report](docs/week3_results.md) for the full comparison,
+leakage constraints, experiment results, and milestone conclusions.
 
 ```bash
 OMP_NUM_THREADS=1 kuaiflow mmoe --config configs/week3_mmoe.yaml
+```
+
+Rebuild the editable SVG and website-ready PNG figures directly from the saved
+experiment artifacts:
+
+```bash
+make week3-figures
 ```
 
 Collection is deliberately absent: KuaiRand-Pure has no per-impression
@@ -258,8 +286,9 @@ accounting for the relevant logging propensities.
   ItemCF, and BPR.
 - **Week 2 — Complete:** feature/history-aware two-tower retrieval, controlled
   ablations, and matched exact-versus-FAISS latency evaluation.
-- **Week 3 — In progress:** trained DeepFM and DeepFM + MMoE rankers over the
-  Week 2 top-100 candidates; DIN is the next ablation.
+- **Week 3 — Major milestone reached:** the first measured end-to-end offline
+  retrieval-to-ranking pipeline is complete. DeepFM and DeepFM + MMoE rerank
+  the fixed Week 2 top 100; DIN remains the next controlled ablation.
 - **Week 4:** random-exposure bias audit and calibrated evaluation.
 - **Week 5:** diversity-aware reranking, FAISS serving, and final report.
 
