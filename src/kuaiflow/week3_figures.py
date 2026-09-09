@@ -862,6 +862,18 @@ def generate_week3_figures(repo_root: str | Path, render_png: bool = True) -> li
             rendered = _render_png(path, width, height)
             if rendered is not None:
                 outputs.append(rendered)
+    if all((root / "artifacts" / f"week3_{name}_results.json").exists()
+           for name in ("din", "din_mmoe")):
+        from kuaiflow.week3_comparison import MODELS, comparison_rows, build_comparison_figure
+        runs = {name: _load_json(root / "artifacts" / f"week3_{name}_results.json")
+                for name, _ in MODELS}
+        comparison = figures / "Week_3_model_comparison.svg"
+        build_comparison_figure(comparison_rows(runs), comparison)
+        outputs.append(comparison)
+        if render_png:
+            rendered = _render_png(comparison, 1500, 1060)
+            if rendered is not None:
+                outputs.append(rendered)
     return outputs
 
 

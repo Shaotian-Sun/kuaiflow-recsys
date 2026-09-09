@@ -1,4 +1,4 @@
-"""Standalone DeepFM training and Week 2 candidate reranking."""
+"""Single-task DeepFM/DIN training and Week 2 candidate reranking."""
 
 from __future__ import annotations
 
@@ -16,6 +16,8 @@ import torch
 from sklearn.metrics import average_precision_score, log_loss, roc_auc_score
 from torch import nn
 
+from kuaiflow.models.din import DIN
+from kuaiflow.history import ClickHistory, prepare_histories, history_args, din_kwargs
 from kuaiflow.data import Week1Splits, load_kuairand_features
 from kuaiflow.metrics import build_ground_truth, evaluate_recommendations
 from kuaiflow.models.deepfm import DeepFM
@@ -155,9 +157,10 @@ class DeepFMFeatures:
 @dataclass
 class DeepFMRun:
     results: dict[str, Any]
-    model: DeepFM
+    model: DeepFM | DIN
     encoder: DeepFMFeatures
     reranked_candidates: pd.DataFrame
+    history_index: ClickHistory | None = None
 
 
 def _attach_static_features(
@@ -217,11 +220,12 @@ def _binary_labels(frame: pd.DataFrame, target: str) -> np.ndarray:
 
 
 def _predict_logits(
-    model: DeepFM,
+    model: DeepFM | DIN,
     categorical: np.ndarray,
     numeric: np.ndarray,
     batch_size: int,
     device: torch.device,
+    sequence: np.ndarray | None = None,
 ) -> np.ndarray:
     model.eval()
     rows: list[np.ndarray] = []
@@ -239,6 +243,7 @@ def _predict_logits(
                         dtype=torch.float32,
                         device=device,
                     ),
+                    *history_args(sequence, slice(start, start + batch_size), device),
                 )
                 .cpu()
                 .numpy()
@@ -311,6 +316,7 @@ def _candidate_metrics(
     candidates: pd.DataFrame,
     splits: Week1Splits,
     k_values: list[int],
+    model_name: str = "deepfm",
 ) -> dict[str, Any]:
     catalog = splits.train["video_id"].drop_duplicates().tolist()
     training_seen = {
@@ -332,18 +338,18 @@ def _candidate_metrics(
             exclude=training_seen,
         )
         retrieval = _recommendation_map(split_candidates, "retrieval_rank")
-        deepfm = _recommendation_map(split_candidates, "deepfm_rank")
+        deepfm = _recommendation_map(split_candidates, f"{model_name}_rank")
         output[split_name] = {
             "candidate_users": len(retrieval),
             "candidate_rows": len(split_candidates),
             "retrieval_order": {},
-            "deepfm_order": {},
+            f"{model_name}_order": {},
         }
         for k in k_values:
             baseline = evaluate_recommendations(retrieval, ground_truth, k, catalog)
             reranked = evaluate_recommendations(deepfm, ground_truth, k, catalog)
             output[split_name]["retrieval_order"][str(k)] = baseline
-            output[split_name]["deepfm_order"][str(k)] = reranked
+            output[split_name][f"{model_name}_order"][str(k)] = reranked
             output[split_name].setdefault("ndcg_delta", {})[str(k)] = (
                 reranked[f"ndcg@{k}"] - baseline[f"ndcg@{k}"]
             )
@@ -361,6 +367,10 @@ def run_deepfm_ranking(
     seed = int(config.get("seed", 2026))
     data_config = config.get("data", {})
     model_config = config.get("model", {})
+    model_name = model_config.get("architecture", "deepfm")
+    if model_name not in ("deepfm", "din"):
+        raise ValueError("Unsupported ranking architecture: " + str(model_name))
+    use_din = model_name == "din"
     training_config = config.get("training", {})
     evaluation_config = config.get("evaluation", {})
     target = str(data_config.get("target_column", "is_click"))
@@ -425,10 +435,13 @@ def run_deepfm_ranking(
         "test": _binary_labels(splits.test, target),
     }
 
+    history_index, histories = (prepare_histories(splits, encoder, model_config)
+                                if use_din else (None, {}))
     torch.manual_seed(seed)
     np.random.seed(seed)
     device = torch.device(model_config.get("device", "cpu"))
-    model = DeepFM(
+    model = (DIN if use_din else DeepFM)(
+        **(din_kwargs(model_config, encoder.categorical) if use_din else {}),
         cardinalities=encoder.cardinalities,
         numeric_dim=len(numeric),
         embedding_dim=int(model_config.get("embedding_dim", 16)),
@@ -469,6 +482,7 @@ def run_deepfm_ranking(
                 torch.as_tensor(
                     train_numeric[batch], dtype=torch.float32, device=device
                 ),
+                *history_args(histories.get("train"), batch, device),
             )
             targets = torch.as_tensor(
                 labels["train"][batch], dtype=torch.float32, device=device
@@ -480,7 +494,7 @@ def run_deepfm_ranking(
             total_loss += float(loss.detach()) * len(batch)
 
         validation_logits = _predict_logits(
-            model, *encoded["validation"], batch_size, device
+            model, *encoded["validation"], batch_size, device, histories.get("validation")
         )
         validation_metrics = _classification_metrics(
             labels["validation"], validation_logits
@@ -507,12 +521,13 @@ def run_deepfm_ranking(
     training_seconds = time.perf_counter() - started
     pointwise = {}
     for split_name in ("validation", "test"):
-        logits = _predict_logits(model, *encoded[split_name], batch_size, device)
+        logits = _predict_logits(model, *encoded[split_name], batch_size, device, histories.get(split_name))
         pointwise[split_name] = _classification_metrics(labels[split_name], logits)
 
     # Candidate scoring is chunked so the million-row handoff never needs one
     # additional full-size encoded matrix in memory.
     encoded.pop("train")
+    histories.pop("train", None)
     candidate_logits = np.empty(len(candidates), dtype=np.float32)
     candidate_chunk_size = int(evaluation_config.get("candidate_chunk_size", 100_000))
     if candidate_chunk_size <= 0:
@@ -524,22 +539,23 @@ def run_deepfm_ranking(
         )
         chunk_encoded = encoder.transform(chunk)
         candidate_logits[start:stop] = _predict_logits(
-            model, *chunk_encoded, batch_size, device
+            model, *chunk_encoded, batch_size, device,
+            history_index.transform(candidates.iloc[start:stop]) if history_index else None
         )
     reranked = candidates.copy()
-    reranked["deepfm_score"] = 1.0 / (
+    reranked[f"{model_name}_score"] = 1.0 / (
         1.0 + np.exp(-np.clip(candidate_logits, -40.0, 40.0))
     )
     reranked = reranked.sort_values(
-        ["split", "user_id", "deepfm_score", "retrieval_rank"],
+        ["split", "user_id", f"{model_name}_score", "retrieval_rank"],
         ascending=[True, True, False, True],
         kind="stable",
     )
-    reranked["deepfm_rank"] = (
+    reranked[f"{model_name}_rank"] = (
         reranked.groupby(["split", "user_id"], sort=False).cumcount() + 1
     )
     reranked = reranked.sort_values(
-        ["split", "user_id", "deepfm_rank"], kind="stable"
+        ["split", "user_id", f"{model_name}_rank"], kind="stable"
     ).reset_index(drop=True)
 
     k_values = sorted({int(k) for k in evaluation_config.get("k_values", [10, 20, 50, 100])})
@@ -547,7 +563,7 @@ def run_deepfm_ranking(
         raise ValueError("evaluation.k_values must be between 1 and candidate_k")
     results = {
         "week": 3,
-        "model": "deepfm",
+        "model": model_name,
         "objective": target,
         "seed": seed,
         "training_examples": len(splits.train),
@@ -558,10 +574,12 @@ def run_deepfm_ranking(
             "numeric": numeric,
             "retrieval_rank_used_as_feature": False,
         },
+        "sequence": history_index.to_dict() if history_index else None,
         "architecture": {
+            "parameter_count": sum(p.numel() for p in model.parameters()),
             "embedding_dim": model.embedding_dim,
             "hidden_dims": list(model.hidden_dims),
-            "logit": "linear + fm_second_order + deep",
+            "logit": "MLP(fields + DIN_interest)" if use_din else "linear + fm_second_order + deep",
         },
         "optimization": {
             "loss": "unweighted_binary_cross_entropy_with_logits",
@@ -573,9 +591,9 @@ def run_deepfm_ranking(
             "history": history,
         },
         "pointwise": pointwise,
-        "candidate_ranking": _candidate_metrics(reranked, splits, k_values),
+        "candidate_ranking": _candidate_metrics(reranked, splits, k_values, model_name),
     }
-    return DeepFMRun(results, model, encoder, reranked)
+    return DeepFMRun(results, model, encoder, reranked, history_index)
 
 
 def save_deepfm_run(
@@ -585,6 +603,8 @@ def save_deepfm_run(
     reranked_candidates_path: str | Path,
 ) -> None:
     """Persist metrics/model metadata and the reranked candidate dataset."""
+    model_name = run.results["model"]
+    artifact_name = model_name
     output = Path(artifacts_dir)
     output.mkdir(parents=True, exist_ok=True)
     reranked_output = Path(reranked_candidates_path)
@@ -593,31 +613,36 @@ def save_deepfm_run(
         reranked_output, index=False, compression="gzip"
     )
 
-    with (output / "week3_deepfm_encoder.json").open("w", encoding="utf-8") as handle:
+    with (output / f"week3_{artifact_name}_encoder.json").open("w", encoding="utf-8") as handle:
         json.dump(run.encoder.to_dict(), handle, indent=2)
+    if run.history_index is not None:
+        run.history_index.save(output / f"week3_{artifact_name}_history.npz")
     torch.save(
         {
             "state_dict": run.model.state_dict(),
+            "history_file": f"week3_{artifact_name}_history.npz" if run.history_index else None,
             "model_config": config.get("model", {}),
             "categorical_features": run.encoder.categorical,
             "numeric_features": run.encoder.numeric,
             "cardinalities": run.encoder.cardinalities,
         },
-        output / "week3_deepfm_model.pt",
+        output / f"week3_{artifact_name}_model.pt",
     )
 
     results = copy.deepcopy(run.results)
     results["outputs"] = {
         "reranked_candidates": str(reranked_output),
-        "model": str(output / "week3_deepfm_model.pt"),
-        "encoder": str(output / "week3_deepfm_encoder.json"),
+        "model": str(output / f"week3_{artifact_name}_model.pt"),
+        "encoder": str(output / f"week3_{artifact_name}_encoder.json"),
     }
-    with (output / "week3_deepfm_results.json").open("w", encoding="utf-8") as handle:
+    if run.history_index is not None:
+        results["outputs"]["history"] = str(output / f"week3_{artifact_name}_history.npz")
+    with (output / f"week3_{artifact_name}_results.json").open("w", encoding="utf-8") as handle:
         json.dump(results, handle, indent=2)
 
     rows: list[dict[str, Any]] = []
     for split, split_result in results["candidate_ranking"].items():
-        for ordering in ("retrieval_order", "deepfm_order"):
+        for ordering in ("retrieval_order", f"{model_name}_order"):
             for k, metrics in split_result[ordering].items():
                 rows.append(
                     {
@@ -632,7 +657,7 @@ def save_deepfm_run(
                     }
                 )
     keys = list(rows[0]) if rows else []
-    with (output / "week3_deepfm_ranking_metrics.csv").open(
+    with (output / f"week3_{artifact_name}_ranking_metrics.csv").open(
         "w", newline="", encoding="utf-8"
     ) as handle:
         writer = csv.DictWriter(handle, fieldnames=keys)
@@ -644,15 +669,17 @@ def load_deepfm_artifacts(
     model_path: str | Path,
     encoder_path: str | Path,
     device: str = "cpu",
-) -> tuple[DeepFM, DeepFMFeatures]:
-    """Load a saved DeepFM and its exact preprocessing contract."""
+) -> tuple[DeepFM | DIN, DeepFMFeatures]:
+    """Restore DeepFM or DIN; DIN models also expose their saved history_index."""
     with Path(encoder_path).open(encoding="utf-8") as handle:
         encoder = DeepFMFeatures.from_dict(json.load(handle))
     checkpoint = torch.load(
         model_path, map_location=torch.device(device), weights_only=True
     )
     model_config = checkpoint["model_config"]
-    model = DeepFM(
+    use_din = model_config.get("architecture", "deepfm") == "din"
+    model = (DIN if use_din else DeepFM)(
+        **(din_kwargs(model_config, encoder.categorical) if use_din else {}),
         cardinalities=checkpoint["cardinalities"],
         numeric_dim=len(checkpoint["numeric_features"]),
         embedding_dim=int(model_config.get("embedding_dim", 16)),
@@ -660,5 +687,7 @@ def load_deepfm_artifacts(
         dropout=float(model_config.get("dropout", 0.1)),
     ).to(torch.device(device))
     model.load_state_dict(checkpoint["state_dict"])
+    if use_din:
+        model.history_index = ClickHistory.load(Path(model_path).parent / checkpoint["history_file"])
     model.eval()
     return model, encoder

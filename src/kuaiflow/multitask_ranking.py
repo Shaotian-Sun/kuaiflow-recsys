@@ -20,6 +20,8 @@ import pandas as pd
 import torch
 from torch.nn import functional as F
 
+from kuaiflow.models.din import DINMMoE
+from kuaiflow.history import ClickHistory, prepare_histories, history_args, din_kwargs
 from kuaiflow.data import Week1Splits, load_kuairand_features
 from kuaiflow.metrics import build_ground_truth, evaluate_recommendations
 from kuaiflow.models.mmoe import DeepFMMMoE
@@ -120,11 +122,12 @@ class MultiTaskTargets:
 @dataclass
 class MMoERun:
     results: dict[str, Any]
-    model: DeepFMMMoE
+    model: DeepFMMMoE | DINMMoE
     encoder: DeepFMFeatures
     duration_curve: DurationCompletionCurve
     reranked_candidates: pd.DataFrame
     metadata: dict[str, Any]
+    history_index: ClickHistory | None = None
 
 
 def _parse_binary_tasks(config: dict[str, Any]) -> dict[str, str]:
@@ -323,7 +326,7 @@ def _configured_weights(
 
 
 def _initialize_task_biases(
-    model: DeepFMMMoE,
+    model: DeepFMMMoE | DINMMoE,
     null_statistics: dict[str, dict[str, float]],
 ) -> None:
     with torch.no_grad():
@@ -379,11 +382,12 @@ def _batch_loss(
 
 
 def _predict_logits(
-    model: DeepFMMMoE,
+    model: DeepFMMMoE | DINMMoE,
     categorical: np.ndarray,
     numeric: np.ndarray,
     batch_size: int,
     device: torch.device,
+    sequence: np.ndarray | None = None,
 ) -> np.ndarray:
     model.eval()
     rows: list[np.ndarray] = []
@@ -401,6 +405,7 @@ def _predict_logits(
                         dtype=torch.float32,
                         device=device,
                     ),
+                    *history_args(sequence, slice(start, start + batch_size), device),
                 ).cpu().numpy()
             )
     if not rows:
@@ -612,18 +617,24 @@ def _candidate_metrics(
     return output
 
 
-def _parameter_group_counts(model: DeepFMMMoE) -> dict[str, int]:
+def _parameter_group_counts(model: DeepFMMMoE | DINMMoE) -> dict[str, int]:
     groups = {
         "shared_feature_embeddings": 0,
         "task_first_order_and_fm": 0,
         "experts": 0,
         "task_gates": 0,
         "task_towers": 0,
+        "sequence_attention": 0,
+        "task_biases": 0,
     }
     for name, parameter in model.named_parameters():
         count = parameter.numel()
         if name.startswith(("feature_embeddings", "numeric_embeddings")):
             groups["shared_feature_embeddings"] += count
+        elif name.startswith("attention"):
+            groups["sequence_attention"] += count
+        elif isinstance(model, DINMMoE) and name.startswith("task_biases"):
+            groups["task_biases"] += count
         elif name.startswith("experts"):
             groups["experts"] += count
         elif name.startswith("gates"):
@@ -668,6 +679,10 @@ def run_mmoe_ranking(
     seed = int(config.get("seed", 2026))
     data_config = config.get("data", {})
     model_config = config.get("model", {})
+    model_name = model_config.get("architecture", "deepfm_mmoe")
+    if model_name not in ("deepfm_mmoe", "din_mmoe"):
+        raise ValueError("Unsupported ranking architecture: " + str(model_name))
+    use_din = model_name == "din_mmoe"
     training_config = config.get("training", {})
     evaluation_config = config.get("evaluation", {})
     ranking_config = config.get("ranking", {})
@@ -803,10 +818,13 @@ def run_mmoe_ranking(
         defaults=default_utility,
     )
 
+    history_index, histories = (prepare_histories(splits, encoder, model_config)
+                                if use_din else (None, {}))
     torch.manual_seed(seed)
     np.random.seed(seed)
     device = torch.device(model_config.get("device", "cpu"))
-    model = DeepFMMMoE(
+    model = (DINMMoE if use_din else DeepFMMMoE)(
+        **(din_kwargs(model_config, encoder.categorical) if use_din else {}),
         cardinalities=encoder.cardinalities,
         numeric_dim=len(numeric),
         task_names=task_names,
@@ -848,6 +866,7 @@ def run_mmoe_ranking(
             logits = model(
                 torch.as_tensor(train_categorical[batch], dtype=torch.long, device=device),
                 torch.as_tensor(train_numeric[batch], dtype=torch.float32, device=device),
+                *history_args(histories.get("train"), batch, device),
             )
             loss, _ = _batch_loss(
                 logits,
@@ -864,7 +883,7 @@ def run_mmoe_ranking(
             total_loss_sum += float(loss.detach()) * len(batch)
 
         validation_logits = _predict_logits(
-            model, *encoded["validation"], batch_size, device
+            model, *encoded["validation"], batch_size, device, histories.get("validation")
         )
         validation_raw = _raw_losses_numpy(
             validation_logits, targets["validation"], task_index
@@ -895,7 +914,7 @@ def run_mmoe_ranking(
 
     pointwise: dict[str, Any] = {}
     for split_name in ("validation", "test"):
-        logits = _predict_logits(model, *encoded[split_name], batch_size, device)
+        logits = _predict_logits(model, *encoded[split_name], batch_size, device, histories.get(split_name))
         pointwise[split_name] = _pointwise_metrics(
             logits,
             targets[split_name],
@@ -912,6 +931,7 @@ def run_mmoe_ranking(
     # Score in chunks so the one-million-row handoff does not need an extra
     # full encoded feature matrix in memory.
     encoded.pop("train")
+    histories.pop("train", None)
     candidate_chunk_size = int(evaluation_config.get("candidate_chunk_size", 100_000))
     if candidate_chunk_size <= 0:
         raise ValueError("evaluation.candidate_chunk_size must be positive")
@@ -933,7 +953,8 @@ def run_mmoe_ranking(
             candidates.iloc[start:stop], user_features, video_features, scoring_features
         )
         chunk_logits = _predict_logits(
-            model, *encoder.transform(chunk), batch_size, device
+            model, *encoder.transform(chunk), batch_size, device,
+            history_index.transform(candidates.iloc[start:stop]) if history_index else None
         )
         for name in binary_tasks:
             candidate_outputs[f"p_{name}"][start:stop] = _sigmoid(
@@ -1015,7 +1036,7 @@ def run_mmoe_ranking(
     }
     results = {
         "week": 3,
-        "model": "deepfm_mmoe",
+        "model": model_name,
         "seed": seed,
         "training_examples": len(splits.train),
         "candidate_source": str(data_config.get("candidates_path", "in-memory")),
@@ -1047,12 +1068,15 @@ def run_mmoe_ranking(
                 "reason": "no per-impression collection label in KuaiRand-Pure",
             },
         },
+        "sequence": history_index.to_dict() if history_index else None,
         "architecture": {
+            "parameter_count": sum(p.numel() for p in model.parameters()),
             "embedding_dim": model.embedding_dim,
             "num_experts": model.num_experts,
             "expert_hidden_dims": list(model.expert_hidden_dims),
             "tower_hidden_dim": model.tower_hidden_dim,
-            "task_logit": "task_linear + task_fm_scale * shared_fm + task_mmoe_tower",
+            "task_logit": ("task_bias + tower(gated_experts(fields + DIN_interest))" if use_din
+                           else "task_linear + task_fm_scale * shared_fm + task_mmoe_tower"),
             "parameter_groups": _parameter_group_counts(model),
         },
         "optimization": {
@@ -1081,7 +1105,7 @@ def run_mmoe_ranking(
         "candidate_ranking": candidate_ranking,
     }
     return MMoERun(
-        results, model, encoder, duration_curve, reranked, metadata
+        results, model, encoder, duration_curve, reranked, metadata, history_index
     )
 
 
@@ -1093,22 +1117,27 @@ def save_mmoe_run(
 ) -> None:
     """Persist the model, preprocessing, fitted curve, metrics, and top 100."""
 
+    model_name = run.results["model"]
+    artifact_name = "mmoe" if model_name == "deepfm_mmoe" else model_name
     output = Path(artifacts_dir)
     output.mkdir(parents=True, exist_ok=True)
     reranked_output = Path(reranked_candidates_path)
     reranked_output.parent.mkdir(parents=True, exist_ok=True)
     run.reranked_candidates.to_csv(reranked_output, index=False, compression="gzip")
 
-    encoder_path = output / "week3_mmoe_encoder.json"
-    curve_path = output / "week3_mmoe_duration_curve.json"
-    model_path = output / "week3_mmoe_model.pt"
+    encoder_path = output / f"week3_{artifact_name}_encoder.json"
+    curve_path = output / f"week3_{artifact_name}_duration_curve.json"
+    model_path = output / f"week3_{artifact_name}_model.pt"
     with encoder_path.open("w", encoding="utf-8") as handle:
         json.dump(run.encoder.to_dict(), handle, indent=2)
     with curve_path.open("w", encoding="utf-8") as handle:
         json.dump(run.duration_curve.to_dict(), handle, indent=2)
+    if run.history_index is not None:
+        run.history_index.save(output / f"week3_{artifact_name}_history.npz")
     torch.save(
         {
             "state_dict": run.model.state_dict(),
+            "history_file": f"week3_{artifact_name}_history.npz" if run.history_index else None,
             "model_config": config.get("model", {}),
             "categorical_features": run.encoder.categorical,
             "numeric_features": run.encoder.numeric,
@@ -1125,7 +1154,9 @@ def save_mmoe_run(
         "encoder": str(encoder_path),
         "duration_curve": str(curve_path),
     }
-    with (output / "week3_mmoe_results.json").open("w", encoding="utf-8") as handle:
+    if run.history_index is not None:
+        results["outputs"]["history"] = str(output / f"week3_{artifact_name}_history.npz")
+    with (output / f"week3_{artifact_name}_results.json").open("w", encoding="utf-8") as handle:
         json.dump(results, handle, indent=2)
 
     rows: list[dict[str, Any]] = []
@@ -1167,7 +1198,7 @@ def save_mmoe_run(
         "hit_rate", "ndcg", "coverage", "evaluated_users",
         "signed_ndcg_improvement",
     ]
-    with (output / "week3_mmoe_ranking_metrics.csv").open(
+    with (output / f"week3_{artifact_name}_ranking_metrics.csv").open(
         "w", newline="", encoding="utf-8"
     ) as handle:
         writer = csv.DictWriter(handle, fieldnames=keys)
@@ -1180,7 +1211,7 @@ def load_mmoe_artifacts(
     encoder_path: str | Path,
     duration_curve_path: str | Path,
     device: str = "cpu",
-) -> tuple[DeepFMMMoE, DeepFMFeatures, DurationCompletionCurve, dict[str, Any]]:
+) -> tuple[DeepFMMMoE | DINMMoE, DeepFMFeatures, DurationCompletionCurve, dict[str, Any]]:
     """Restore the exact trained model and every train-fitted transformation."""
 
     with Path(encoder_path).open(encoding="utf-8") as handle:
@@ -1191,8 +1222,10 @@ def load_mmoe_artifacts(
         model_path, map_location=torch.device(device), weights_only=True
     )
     model_config = checkpoint["model_config"]
+    use_din = model_config.get("architecture", "deepfm_mmoe") == "din_mmoe"
     metadata = checkpoint["metadata"]
-    model = DeepFMMMoE(
+    model = (DINMMoE if use_din else DeepFMMMoE)(
+        **(din_kwargs(model_config, encoder.categorical) if use_din else {}),
         cardinalities=checkpoint["cardinalities"],
         numeric_dim=len(checkpoint["numeric_features"]),
         task_names=metadata["task_names"],
@@ -1203,6 +1236,8 @@ def load_mmoe_artifacts(
         dropout=float(model_config.get("dropout", 0.1)),
     ).to(torch.device(device))
     model.load_state_dict(checkpoint["state_dict"])
+    if use_din:
+        model.history_index = ClickHistory.load(Path(model_path).parent / checkpoint["history_file"])
     model.eval()
     return model, encoder, duration_curve, metadata
 

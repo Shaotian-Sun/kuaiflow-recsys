@@ -1,0 +1,45 @@
+seed: 2026
+
+data:
+  processed_dir: data/processed
+  raw_dir: data/raw
+  candidates_path: data/processed/candidates/week2_feature_history_faiss_ivf_top100.csv.gz
+  reranked_candidates_path: data/processed/ranking/week3_din_top100.csv.gz
+  target_column: is_click
+  # Only fields available both during logged training and candidate scoring.
+  categorical_features:
+    - user_id
+    - video_id
+    - author_id
+    - video_type
+    - upload_type
+    - music_id
+    - music_type
+  numeric_features:
+    - video_duration
+    - server_width
+    - server_height
+
+model:
+  architecture: din
+  history_max_length: 30
+  attention_hidden_dims: [64, 32]
+  embedding_dim: 16
+  hidden_dims: [128, 64]
+  dropout: 0.1
+  device: cpu
+
+training:
+  learning_rate: 0.001
+  weight_decay: 0.000001
+  epochs: 5
+  batch_size: 2048
+  early_stopping_patience: 2
+
+evaluation:
+  candidate_k: 100
+  expected_users_per_split: 5000
+  candidate_chunk_size: 100000
+  k_values: [10, 20, 50, 100]
+
+artifacts_dir: artifacts

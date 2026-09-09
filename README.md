@@ -28,6 +28,7 @@ and Bayesian Personalized Ranking (BPR) baselines.
 - Exact and FAISS approximate-nearest-neighbor retrieval evaluation.
 - Single-task DeepFM click ranking over fixed retrieved candidates.
 - DeepFM + MMoE ranking with eight action targets, watch time, and completion.
+- DIN and DIN + MMoE with causal target-aware click histories and a four-model comparison.
 - Recall@K, HitRate@K, NDCG@K, and catalog coverage.
 - Explicit novel-item, warm-start evaluation rather than mixing in impossible
   cold-start targets.
@@ -55,7 +56,7 @@ milestone by connecting those candidates to trained ranking models.
    warm-start evaluation, Popularity, ItemCF, and BPR.
 2. **Week 2 — Two-tower retrieval:** feature and history ablations, followed by
    exact-versus-FAISS latency and fidelity evaluation.
-3. **Week 3 — DeepFM + MMoE ranking:** ten jointly trained objectives and a
+3. **Week 3 — DeepFM, DIN, and MMoE ranking:** four ranking models, ten jointly trained objectives, and a
    measured fixed-candidate retrieval-to-ranking handoff. See the
    [full Week 3 experimental report](docs/week3_results.md).
 
@@ -201,17 +202,18 @@ the YAML configuration to control the benchmark. `OMP_NUM_THREADS=1` makes CPU
 threading explicit and reproducible; use the same value whenever comparing
 results from different runs.
 
-## Week 3 — DeepFM + MMoE multi-task ranking
+## Week 3 — DeepFM, DIN, and multi-task ranking
 
 ### Major milestone — first end-to-end result
 
 KuaiFlow now runs one measured offline path from chronological impressions,
 through Week 2 two-tower/FAISS top-100 retrieval, into DeepFM + MMoE scoring and
-a final multi-objective top-100 order. The ranker preserves candidate membership:
+a final top-100 order using DeepFM, DIN, DeepFM + MMoE, or DIN + MMoE.
+The ranker preserves candidate membership:
 it improves the order of the 100 retrieved videos but cannot recover a video the
 retriever missed.
 
-![KuaiFlow Week 3 end-to-end ranking results](figures/Week_3_experiment_results.png)
+![KuaiFlow Week 3 four-model comparison](figures/Week_3_model_comparison.png)
 
 See the [full Week 3 experimental report](docs/week3_results.md) for the
 workflow, evaluation protocol, pointwise and candidate-ranking results,
@@ -242,6 +244,24 @@ leakage constraints, experiment results, and milestone conclusions.
 
 ```bash
 OMP_NUM_THREADS=1 kuaiflow mmoe --config configs/week3_mmoe.yaml
+```
+
+DIN adds attention over the latest 30 strictly prior training clicks. DIN + MMoE
+feeds the same attended history into the ten-task expert network. Both use
+history frozen at the training cutoff for validation, test, and candidate scoring.
+See the [DIN implementation guide](docs/week3_din.md) and
+[full four-model comparison](docs/week3_results.md).
+
+In the seed-2026 comparison, DIN reaches test click AUC **0.7233** and
+NDCG@20 **2.015%**, versus DeepFM's 0.7195 and 1.687%. DIN + MMoE
+raises composite NDCG@20 from **1.799% to 1.862%** over DeepFM + MMoE.
+DIN leads NDCG@20 on both validation and test; the multi-task models retain
+broader objectives and higher catalog coverage. These are single-seed offline results.
+
+```bash
+OMP_NUM_THREADS=1 kuaiflow din --config configs/week3_din.yaml
+OMP_NUM_THREADS=1 kuaiflow din-mmoe --config configs/week3_din_mmoe.yaml
+make week3-comparison
 ```
 
 Rebuild the editable SVG and website-ready PNG figures directly from the saved
@@ -287,8 +307,9 @@ accounting for the relevant logging propensities.
 - **Week 2 — Complete:** feature/history-aware two-tower retrieval, controlled
   ablations, and matched exact-versus-FAISS latency evaluation.
 - **Week 3 — Major milestone reached:** the first measured end-to-end offline
-  retrieval-to-ranking pipeline is complete. DeepFM and DeepFM + MMoE rerank
-  the fixed Week 2 top 100; DIN remains the next controlled ablation.
+  retrieval-to-ranking pipeline is complete. DeepFM, DIN, DeepFM + MMoE, and DIN + MMoE rerank
+  the fixed Week 2 top 100 with a measured comparison. Matched history/attention
+  ablations and validation-based utility tuning are next.
 - **Week 4:** random-exposure bias audit and calibrated evaluation.
 - **Week 5:** diversity-aware reranking, FAISS serving, and final report.
 

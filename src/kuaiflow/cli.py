@@ -76,6 +76,9 @@ def _parser() -> argparse.ArgumentParser:
     deepfm.add_argument("--config", default="configs/week3_deepfm.yaml")
     mmoe = subparsers.add_parser("mmoe")
     mmoe.add_argument("--config", default="configs/week3_mmoe.yaml")
+    for command in ("din", "din-mmoe"):
+        sub = subparsers.add_parser(command)
+        sub.add_argument("--config", default="configs/week3_" + command.replace("-", "_") + ".yaml")
     return parser
 
 
@@ -117,6 +120,15 @@ def main() -> None:
         return
 
     config = _load_config(args.config)
+    ranking_architectures = {
+        "deepfm": "deepfm", "mmoe": "deepfm_mmoe", "din": "din", "din-mmoe": "din_mmoe"
+    }
+    if args.command in ranking_architectures:
+        expected = ranking_architectures[args.command]
+        configured = config.setdefault("model", {}).get("architecture", expected)
+        if configured != expected:
+            raise ValueError(f"{args.command} requires model.architecture={expected}, got {configured}")
+        config["model"]["architecture"] = expected
     if args.command == "download":
         path = download_kuairand_pure(config["data"]["raw_dir"])
         print(f"Dataset extracted under {path}")
@@ -157,7 +169,7 @@ def main() -> None:
                 {key: value for key, value in results.items() if key != "candidates"},
                 indent=2,
             ))
-    elif args.command == "deepfm":
+    elif args.command in ("deepfm", "din"):
         run = run_deepfm_ranking(
             load_prepared(config["data"]["processed_dir"]), config
         )
@@ -168,7 +180,7 @@ def main() -> None:
             config["data"]["reranked_candidates_path"],
         )
         print(json.dumps(run.results, indent=2))
-    elif args.command == "mmoe":
+    elif args.command in ("mmoe", "din-mmoe"):
         run = run_mmoe_ranking(
             load_prepared(config["data"]["processed_dir"]), config
         )
