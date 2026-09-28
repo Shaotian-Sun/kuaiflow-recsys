@@ -339,8 +339,8 @@ unbiased off-policy evaluation claim.
   ablations, and matched exact-versus-FAISS latency evaluation.
 - **Week 3 — Major milestone reached:** the first measured end-to-end offline
   retrieval-to-ranking pipeline is complete. DeepFM, DIN, DeepFM + MMoE, and DIN + MMoE rerank
-  the fixed Week 2 top 100 with a measured comparison. Matched history/attention
-  ablations and validation-based utility tuning are next.
+  the fixed Week 2 top 100 with a measured comparison. The [three-seed matched pooling ablation](docs/pooling_ablation_results.md) is complete;
+  validation-based utility tuning is next.
 - **Week 4 — Implemented:** exposure-robustness audit and calibrated evaluation
   of the four frozen models, with time-aligned final holdouts, reliability
   diagrams, and paired uncertainty. Measured outputs are in the Week 4 report.
@@ -357,3 +357,7 @@ information are available from the
 
 Code in this repository is released under the MIT License. The KuaiRand dataset
 has its own CC BY-SA 4.0 license and attribution requirements.
+
+## Matched history-pooling ablation
+
+The single-task DIN pooling comparison and reproducible three-seed protocol are described in [the ablation report](docs/pooling_ablation.md). It preserves existing Week 3 and Week 4 artifacts. [Measured results](docs/pooling_ablation_results.md) show attention has the highest mean validation NDCG@20, while its test NDCG@20 is very close to mean pooling.

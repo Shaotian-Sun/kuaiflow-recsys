@@ -41,3 +41,10 @@ week4:
 
 week4-report:
 	python -m kuaiflow.week4_report
+
+.PHONY: pooling-ablation pooling-report
+pooling-ablation:
+	OMP_NUM_THREADS=1 python -m kuaiflow.pooling_ablation
+
+pooling-report:
+	python -m kuaiflow.pooling_report

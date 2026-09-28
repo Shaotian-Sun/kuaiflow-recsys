@@ -103,5 +103,6 @@ def history_args(history, selection, device):
 def din_kwargs(model_config, categorical):
     if "video_id" not in categorical:
         raise ValueError("DIN requires video_id in categorical_features")
-    return {"video_field_index": categorical.index("video_id"),
+    return {"history_pooling": model_config.get("history_pooling", "attention"),
+            "video_field_index": categorical.index("video_id"),
             "attention_hidden_dims": tuple(model_config.get("attention_hidden_dims", [64, 32]))}

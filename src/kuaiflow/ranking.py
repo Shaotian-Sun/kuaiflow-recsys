@@ -576,6 +576,7 @@ def run_deepfm_ranking(
         },
         "sequence": history_index.to_dict() if history_index else None,
         "architecture": {
+            "history_pooling": model.history_pooling if use_din else None,
             "parameter_count": sum(p.numel() for p in model.parameters()),
             "embedding_dim": model.embedding_dim,
             "hidden_dims": list(model.hidden_dims),

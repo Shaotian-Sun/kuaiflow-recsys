@@ -35,7 +35,7 @@ class LocalActivation(nn.Module):
 class DIN(nn.Module):
     def __init__(self, cardinalities, numeric_dim, video_field_index,
                  embedding_dim=16, hidden_dims=(128, 64), dropout=0.1,
-                 attention_hidden_dims=(64, 32)):
+                 attention_hidden_dims=(64, 32), history_pooling="attention"):
         super().__init__()
         if not cardinalities or any(int(c) <= 1 for c in cardinalities):
             raise ValueError("DIN requires categorical fields with at least two IDs")
@@ -45,6 +45,9 @@ class DIN(nn.Module):
             raise ValueError("Invalid numeric_dim, embedding_dim or dropout")
         if not hidden_dims or any(int(n) <= 0 for n in hidden_dims):
             raise ValueError("hidden_dims must contain positive values")
+        if history_pooling not in ("attention", "mean", "sum", "none"):
+            raise ValueError("Unknown history_pooling: " + str(history_pooling))
+        self.history_pooling = history_pooling
         self.cardinalities = tuple(cardinalities)
         self.numeric_dim = int(numeric_dim)
         self.embedding_dim = int(embedding_dim)
@@ -74,9 +77,16 @@ class DIN(nn.Module):
             raise ValueError("history must be a batch of video ID sequences")
         fields = [emb(categorical[:, i]) for i, emb in enumerate(self.feature_embeddings)]
         video_embedding = self.feature_embeddings[self.video_field_index]
-        interest, weights = self.attention(
-            fields[self.video_field_index], video_embedding(history), history > 1
-        )
+        keys, mask = video_embedding(history), history > 1
+        if self.history_pooling == "attention":
+            interest, weights = self.attention(fields[self.video_field_index], keys, mask)
+        else:
+            weights = mask.to(keys.dtype)
+            if self.history_pooling == "mean":
+                weights = weights / weights.sum(dim=1, keepdim=True).clamp_min(1)
+            elif self.history_pooling == "none":
+                weights = torch.zeros_like(weights)
+            interest = (keys * weights.unsqueeze(-1)).sum(dim=1)
         fields.extend(numeric[:, i:i+1] * self.numeric_embeddings[i]
                       for i in range(self.numeric_dim))
         return torch.cat([*fields, interest], dim=1), weights
@@ -89,13 +99,13 @@ class DIN(nn.Module):
 class DINMMoE(DIN):
     def __init__(self, cardinalities, numeric_dim, video_field_index, task_names,
                  embedding_dim=16, num_experts=4, expert_hidden_dims=(128, 64),
-                 tower_hidden_dim=32, dropout=0.1, attention_hidden_dims=(64, 32)):
+                 tower_hidden_dim=32, dropout=0.1, attention_hidden_dims=(64, 32), history_pooling="attention"):
         if not task_names or len(set(task_names)) != len(task_names) or any(not t for t in task_names):
             raise ValueError("task_names must be non-empty and unique")
         if num_experts <= 0 or tower_hidden_dim <= 0:
             raise ValueError("Expert count and tower width must be positive")
         super().__init__(cardinalities, numeric_dim, video_field_index, embedding_dim,
-                         expert_hidden_dims, dropout, attention_hidden_dims)
+                         expert_hidden_dims, dropout, attention_hidden_dims, history_pooling)
         del self.deep
         self.task_names = tuple(task_names)
         self.num_experts = int(num_experts)

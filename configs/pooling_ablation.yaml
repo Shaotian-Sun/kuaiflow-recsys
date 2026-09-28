@@ -1,0 +1,4 @@
+# Fixed before observing results. All four modes run for every seed.
+base_config: configs/week3_din.yaml
+seeds: [2026, 2027, 2028]
+output_dir: artifacts/pooling_ablation
