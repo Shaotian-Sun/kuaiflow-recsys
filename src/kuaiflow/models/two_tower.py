@@ -67,6 +67,25 @@ class _UserTower(nn.Module):
         return F.normalize(self.network(torch.cat(parts, dim=-1)), dim=-1)
 
 
+def _strict_histories(user_ids, item_indices, timestamps, max_history):
+    """Exclude all equal-time events, not just the current row."""
+    times = np.asarray(timestamps, dtype=float)
+    if not np.isfinite(times).all() or not np.equal(times, np.floor(times)).all():
+        raise ValueError("History timestamps must be finite integer values")
+    frame = pd.DataFrame({"user": list(user_ids), "item": item_indices, "time": times})
+    history = np.full((len(frame), max_history), -1, np.int64)
+    running = {}
+    offsets = np.arange(max_history, 0, -1)
+    for user, positions in frame.groupby("user", sort=False).indices.items():
+        ordered = frame.iloc[positions].sort_values(["time", "item"], kind="stable")
+        items = ordered.item.to_numpy(np.int64)
+        ends = np.searchsorted(ordered.time.to_numpy(), times[positions], side="left")
+        indices = ends[:, None] - offsets
+        history[positions] = np.where(indices >= 0, items[np.maximum(indices, 0)], -1)
+        running[user] = items.tolist()
+    return history, running
+
+
 class TwoTowerRecommender:
     """Two towers using IDs, static metadata, and prior positive item history.
 
@@ -127,14 +146,10 @@ class TwoTowerRecommender:
         users = positives[user_col].map(self.user_to_index).to_numpy(np.int64)
         items = positives[item_col].map(self.item_to_index).to_numpy(np.int64)
 
-        histories = np.full((len(items), self.max_history), -1, np.int64)
-        running: dict[Hashable, list[int]] = {}
-        for row, (user, item) in enumerate(zip(positives[user_col], items)):
-            prior = running.setdefault(user, [])
-            tail = prior[-self.max_history:]
-            if tail:
-                histories[row, -len(tail):] = tail
-            prior.append(int(item))
+        if self.use_history and time_col not in positives:
+            raise ValueError("Causal retrieval histories require timestamps")
+        timestamps = positives[time_col].to_numpy() if time_col in positives else np.arange(len(items))
+        histories, running = _strict_histories(positives[user_col], items, timestamps, self.max_history)
         self.user_history = {user: np.asarray(history[-self.max_history:], np.int64) for user, history in running.items()}
         self.user_seen = {user: set(history) for user, history in running.items()}
         self.popularity = np.bincount(items, minlength=len(self.item_ids)).astype(float)

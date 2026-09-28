@@ -1,0 +1,4 @@
+base_config: configs/week3_din_mmoe.yaml
+single_task_results: artifacts/pooling_ablation/results.json
+seeds: [2026, 2027, 2028]
+output_dir: artifacts/mmoe_pooling_ablation

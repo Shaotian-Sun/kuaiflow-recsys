@@ -1,0 +1,8 @@
+retrieval_config: configs/week2_faiss_ivf.yaml
+ranker_dir: artifacts/pooling_ablation/seed_2026/mean
+budgets: [100, 200, 500]
+output_dir: artifacts/retrieval_budget_causal
+latency_users: 256
+latency_repeats: 3
+# Fixed search grid; validation chooses candidate budget and retrieval settings.
+temperatures: [0.04, 0.10]

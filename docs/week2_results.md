@@ -1,5 +1,7 @@
 # KuaiFlow — Week 2 Two-Tower Retrieval Results
 
+> Historical snapshot: a later [retrieval audit](retrieval_budget.md) found that equal-time training clicks could enter each other's histories. Current source fixes this. The numbers below describe the earlier implementation and are preserved for provenance; use the new budget experiment for corrected results.
+
 Week 2 moves KuaiFlow from heuristic and matrix-factorization baselines to a
 learned candidate-retrieval system. The work combines a feature- and
 history-aware two-tower model with exact and approximate nearest-neighbor

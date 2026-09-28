@@ -1,0 +1,13 @@
+seed: 2026
+retrieval_dir: artifacts/retrieval_budget_causal
+ranker_dir: artifacts/pooling_ablation/seed_2026/mean
+processed_dir: data/processed
+raw_dir: data/raw
+candidate_path: data/processed/candidates/week2_feature_history_faiss_ivf_top100.csv.gz
+candidate_budget: 100
+rrf_constant: 60
+itemcf_weights: [0.0, 0.25, 0.5, 0.75, 1.0]
+neural_weights: [0.0, 0.05, 0.1, 0.25, 0.5, 1.0]
+validation_tune_fraction: 0.5
+bootstrap_repeats: 1000
+output_dir: artifacts/pipeline_improvement
