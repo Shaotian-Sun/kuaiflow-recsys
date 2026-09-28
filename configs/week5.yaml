@@ -1,0 +1,13 @@
+seed: 2026
+prior_results: artifacts/pipeline_improvement/results.json
+candidate_dir: artifacts/pipeline_improvement
+retrieval_dir: artifacts/retrieval_budget_causal
+ranker_dir: artifacts/pooling_ablation/seed_2026/attention
+processed_dir: data/processed
+raw_dir: data/raw
+candidate_budget: 100
+k: 20
+strengths: [0.0, 0.05, 0.1, 0.2, 0.4]
+max_relative_ndcg_loss: 0.02
+bootstrap_repeats: 1000
+output_dir: artifacts/week5

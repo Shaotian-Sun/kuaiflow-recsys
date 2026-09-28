@@ -48,3 +48,42 @@ pooling-ablation:
 
 pooling-report:
 	python -m kuaiflow.pooling_report
+
+.PHONY: mmoe-pooling-ablation mmoe-pooling-report
+mmoe-pooling-ablation:
+	OMP_NUM_THREADS=1 python -m kuaiflow.mmoe_pooling_ablation
+
+mmoe-pooling-report:
+	python -m kuaiflow.mmoe_pooling_report
+
+.PHONY: retrieval-budget retrieval-budget-report
+retrieval-budget:
+	OMP_NUM_THREADS=1 python -m kuaiflow.retrieval_budget
+
+retrieval-budget-report:
+	OMP_NUM_THREADS=1 python -m kuaiflow.retrieval_budget_verify
+	python -m kuaiflow.retrieval_budget_report
+
+.PHONY: pipeline-improvement pipeline-report
+pipeline-improvement:
+	OMP_NUM_THREADS=1 python -m kuaiflow.pipeline_improvement
+
+pipeline-report:
+	OMP_NUM_THREADS=1 python -m kuaiflow.pipeline_report
+
+.PHONY: week5 week5-evaluate week5-verify week5-report serve
+week5: week5-evaluate
+	$(MAKE) week5-verify
+	$(MAKE) week5-report
+
+week5-evaluate:
+	OMP_NUM_THREADS=1 python -m kuaiflow.week5
+
+week5-verify:
+	OMP_NUM_THREADS=1 python -m kuaiflow.week5_verify
+
+week5-report:
+	python -m kuaiflow.week5_report
+
+serve:
+	OMP_NUM_THREADS=1 python -m kuaiflow.serving

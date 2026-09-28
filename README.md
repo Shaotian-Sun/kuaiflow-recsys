@@ -1,9 +1,10 @@
 # KuaiFlow
 
 KuaiFlow is a reproducible, multi-stage short-video recommendation project built
-on the KuaiRand dataset. The project starts with trustworthy implicit-feedback
-baselines, then develops toward two-tower retrieval, multi-task ranking, and an
-exposure-bias audit using randomized recommendations.
+on the KuaiRand dataset. The five-week offline prototype includes implicit-feedback
+baselines, two-tower retrieval, multi-task ranking, an exposure calibration audit,
+diversity-aware reranking, and a local recommendation API. ItemCF remains the
+strongest measured click-ranking baseline; the full neural path is also runnable.
 
 ## Why this project
 
@@ -34,6 +35,9 @@ and Bayesian Personalized Ranking (BPR) baselines.
 - Recall@K, HitRate@K, NDCG@K, and catalog coverage.
 - Explicit novel-item, warm-start evaluation rather than mixing in impossible
   cold-start targets.
+- Validation-selected author/tag MMR reranking with measured relevance costs.
+- Local HTTP serving for ItemCF and hybrid retrieval → DIN attention → MMR,
+  with verified artifacts, request validation, and exact offline/HTTP replay.
 - Deterministic toy demo and unit tests.
 
 ## Repository layout
@@ -64,6 +68,8 @@ milestone by connecting those candidates to trained ranking models.
 4. **Week 4 — Exposure robustness and calibration:** frozen Week 3 checkpoints,
    standard versus early-random Platt calibration, and aligned future tests.
    See the [Week 4 experimental report](docs/week4_results.md).
+5. **Week 5 — Diversity reranking and serving:** fixed-candidate MMR, local JSON API,
+   replay and latency checks, and the [five-week completion report](docs/week5_results.md).
 
 ## Week 1 — Recommendation baselines
 
@@ -340,11 +346,14 @@ unbiased off-policy evaluation claim.
 - **Week 3 — Major milestone reached:** the first measured end-to-end offline
   retrieval-to-ranking pipeline is complete. DeepFM, DIN, DeepFM + MMoE, and DIN + MMoE rerank
   the fixed Week 2 top 100 with a measured comparison. The [three-seed matched pooling ablation](docs/pooling_ablation_results.md) is complete;
-  validation-based utility tuning is next.
+  [MMoE scoring comparison](docs/mmoe_pooling_ablation_results.md) and
+  [validation-based source/neural blending](docs/pipeline_improvement_results.md) are complete.
 - **Week 4 — Implemented:** exposure-robustness audit and calibrated evaluation
   of the four frozen models, with time-aligned final holdouts, reliability
   diagrams, and paired uncertainty. Measured outputs are in the Week 4 report.
-- **Week 5:** diversity-aware reranking, FAISS serving, and final report.
+- **Week 5 — Complete as an offline prototype:** diversity-aware reranking,
+  FAISS/DIN and ItemCF serving profiles, HTTP replay, local latency, and
+  [final report](docs/week5_results.md). Online deployment and A/B testing remain outside scope.
 
 ## Dataset
 
@@ -361,3 +370,40 @@ has its own CC BY-SA 4.0 license and attribution requirements.
 ## Matched history-pooling ablation
 
 The single-task DIN pooling comparison and reproducible three-seed protocol are described in [the ablation report](docs/pooling_ablation.md). It preserves existing Week 3 and Week 4 artifacts. [Measured results](docs/pooling_ablation_results.md) show attention has the highest mean validation NDCG@20, while its test NDCG@20 is very close to mean pooling.
+
+## MMoE pooling and scoring strategies
+
+The [three-seed MMoE experiment](docs/mmoe_pooling_ablation_results.md) compares mean and attention pooling, click-only and fixed composite scoring, and the existing single-task mean baseline. [Protocol](docs/mmoe_pooling_ablation.md). The single-task baseline leads average click NDCG@20; combining outcomes trades click/long-view ranking for like/profile-entry ranking relative to MMoE click-only scoring. No utility weights were tuned.
+
+## Retrieval budget and ranking ceiling
+
+The [candidate-budget experiment](docs/retrieval_budget.md) evaluates 100/200/500 candidates with a frozen mean-pooling ranker and a small validation-only retrieval search. Its audit found and fixed same-timestamp history leakage in two-tower training. Earlier Week 2 results and candidate-based Week 3 comparisons remain historical snapshots of the earlier retrieval implementation; new experiments use strict timestamp exclusion.
+
+The [corrected retrieval results](docs/retrieval_budget_results.md) retain K=100: larger budgets improve recall but hurt final NDCG@20 with the frozen ranker. A validation-selected two-tower/ItemCF mixture improves final test NDCG@20 from 1.924% to 3.253%. This is a single-seed offline comparison, not online lift.
+
+## Current validation-selected recommendation pipeline
+
+The [whole-pipeline comparison](docs/pipeline_improvement_results.md) includes the previously missing ItemCF-only control, source-rank fusion and neural-score blending. Tuning selected ItemCF-only with no neural reranking; it reached test NDCG@20 6.141%, versus 3.885% for the mixed retrieval order and 3.253% for mixed candidates plus the neural ranker. The selection was confirmed on reserved validation users. This restores a stronger existing baseline rather than claiming a new model improvement over ItemCF. Catalog coverage is lower than mixed retrieval.
+
+Run `python -m kuaiflow.recommend --users 1 2 --k 20` from the repository root with local artifacts available, or use `RecommendationPipeline.load("artifacts/pipeline_improvement/selected_pipeline.json").recommend(user_ids)`. The inference path uses training-only ItemCF, excludes training-clicked items, and skips unused neural models. User IDs in the command are examples.
+
+## Week 5 — Diversity reranking and local service
+
+The [operations guide](docs/week5.md) covers prerequisites, API requests, Python
+usage, and reproduction. The [final report](docs/week5_results.md) includes the
+validation search, confirmation/test tradeoffs, exact HTTP replay, and latency.
+
+```bash
+make week5
+OMP_NUM_THREADS=1 .venv/bin/python -m kuaiflow.serving --profile itemcf
+```
+
+The default preserves ItemCF ordering. To exercise the full neural pipeline,
+run `python -m kuaiflow.serving --profile hybrid_din --diversity --port 8001`.
+Diversity reranking is opt-in: its selected ItemCF setting improves tag diversity
+but exceeds the relevance-loss budget on confirmation and test. Frozen choices
+remain recorded; no test-based retuning is presented as validation selection.
+
+This completes the planned offline architecture, not a production deployment or
+a claim that the neural models beat ItemCF. See the [commit guide](docs/commit_plan.md)
+to preserve the preceding experiment checkpoint separately from Week 5.
