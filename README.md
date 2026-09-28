@@ -6,6 +6,9 @@ baselines, two-tower retrieval, multi-task ranking, an exposure calibration audi
 diversity-aware reranking, and a local recommendation API. ItemCF remains the
 strongest measured click-ranking baseline; the full neural path is also runnable.
 
+Read the [final five-week project report](docs/final_report.md) for the consolidated
+architecture, experimental findings, serving verification, limitations, and next steps.
+
 ## Why this project
 
 Many portfolio recommenders stop at a MovieLens notebook. KuaiFlow is organized
