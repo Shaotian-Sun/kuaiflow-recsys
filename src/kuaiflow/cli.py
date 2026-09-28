@@ -79,6 +79,8 @@ def _parser() -> argparse.ArgumentParser:
     for command in ("din", "din-mmoe"):
         sub = subparsers.add_parser(command)
         sub.add_argument("--config", default="configs/week3_" + command.replace("-", "_") + ".yaml")
+    audit = subparsers.add_parser("week4", help="Frozen-model exposure bias and calibration audit")
+    audit.add_argument("--config", default="configs/week4.yaml")
     return parser
 
 
@@ -129,7 +131,12 @@ def main() -> None:
         if configured != expected:
             raise ValueError(f"{args.command} requires model.architecture={expected}, got {configured}")
         config["model"]["architecture"] = expected
-    if args.command == "download":
+    if args.command == "week4":
+        from kuaiflow.week4 import run_week4_audit
+        results = run_week4_audit(config)
+        print(json.dumps({"cohorts": results["cohorts"], "elapsed_seconds": results["elapsed_seconds"],
+                          "report": str(Path(config.get("report_root", ".")) / "docs/week4_results.md")}, indent=2))
+    elif args.command == "download":
         path = download_kuairand_pure(config["data"]["raw_dir"])
         print(f"Dataset extracted under {path}")
     elif args.command == "prepare":

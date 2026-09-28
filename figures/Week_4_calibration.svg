@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1000" viewBox="0 0 1280 1000" role="img" aria-labelledby="figure-title figure-description">
+<title id="figure-title">Week 4: calibration under exposure shift</title>
+<desc id="figure-description">4 frozen Week 3 models, evaluated on time-aligned standard and randomized final impressions. Shared-axis click log-loss bars compare raw scores with standard and randomized Platt calibration; lower is better.</desc>
+<defs>
+              <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+                <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#0B1736" flood-opacity="0.13"/>
+              </filter>
+              <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0B1736" flood-opacity="0.10"/>
+              </filter>
+              <linearGradient id="milestone" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#0B1736"/>
+                <stop offset="0.55" stop-color="#173F73"/>
+                <stop offset="1" stop-color="#087F8C"/>
+              </linearGradient>
+              <linearGradient id="blueHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#0D57A1"/><stop offset="1" stop-color="#2582D3"/>
+              </linearGradient>
+              <linearGradient id="greenHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#08743F"/><stop offset="1" stop-color="#28A56B"/>
+              </linearGradient>
+              <linearGradient id="purpleHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#56369D"/><stop offset="1" stop-color="#8468C9"/>
+              </linearGradient>
+              <linearGradient id="orangeHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#D87D00"/><stop offset="1" stop-color="#F5AA19"/>
+              </linearGradient>
+              <linearGradient id="tealHeader" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#046B76"/><stop offset="1" stop-color="#16A0A8"/>
+              </linearGradient>
+              <linearGradient id="barBlue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#2E85D0"/><stop offset="1" stop-color="#0758A3"/>
+              </linearGradient>
+              <linearGradient id="barOrange" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#FDB31A"/><stop offset="1" stop-color="#E08200"/>
+              </linearGradient>
+              <linearGradient id="barTeal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#24A8AE"/><stop offset="1" stop-color="#05717F"/>
+              </linearGradient>
+              <linearGradient id="barPurple" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#9B7BD0"/><stop offset="1" stop-color="#6242A9"/>
+              </linearGradient>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#111827"/>
+              </marker>
+              <style>
+                text { font-family: Inter, Arial, Helvetica, sans-serif; }
+              </style>
+            </defs>
+<rect x="0" y="0" width="1280" height="1000" rx="0" fill="#F5F7FB" stroke="none" stroke-width="1" opacity="1"/>
+<text x="48" y="58" font-size="31" fill="#0B1736" font-weight="800" text-anchor="start" font-style="normal" letter-spacing="0">Week 4 · Calibration under exposure shift</text>
+<text x="48" y="90" font-size="18" fill="#526078" font-weight="400" text-anchor="start" font-style="normal" letter-spacing="0">Frozen Week 3 models · final time holdout · click log loss (nats / impression) ↓</text>
+<rect x="52" y="113" width="16" height="16" rx="3" fill="#0B1736" stroke="none" stroke-width="1" opacity="1"/>
+<text x="77" y="127" font-size="16" fill="#0B1736" font-weight="400" text-anchor="start" font-style="normal" letter-spacing="0">Raw</text>
+<rect x="272" y="113" width="16" height="16" rx="3" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="297" y="127" font-size="16" fill="#0B1736" font-weight="400" text-anchor="start" font-style="normal" letter-spacing="0">Standard Platt</text>
+<rect x="492" y="113" width="16" height="16" rx="3" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="517" y="127" font-size="16" fill="#0B1736" font-weight="400" text-anchor="start" font-style="normal" letter-spacing="0">Random Platt</text>
+<rect x="38" y="159" width="604" height="370" rx="12" fill="white" stroke="#DCE3EC" stroke-width="1" opacity="1"/>
+<text x="64" y="194" font-size="22" fill="#0B1736" font-weight="750" text-anchor="start" font-style="normal" letter-spacing="0">DeepFM</text>
+<text x="57" y="340.0" transform="rotate(-90 57 340.0)" text-anchor="middle" font-size="12" fill="#526078">Click log loss (nats / impression)</text>
+<line x1="104" y1="455.0" x2="607" y2="455.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="460.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.00</text>
+<line x1="104" y1="397.5" x2="607" y2="397.5" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="402.5" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.25</text>
+<line x1="104" y1="340.0" x2="607" y2="340.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="345.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.50</text>
+<line x1="104" y1="282.5" x2="607" y2="282.5" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="287.5" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.75</text>
+<line x1="104" y1="225.0" x2="607" y2="225.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="230.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">1.00</text>
+<rect x="137" y="313.1421109303228" width="44" height="141.8578890696772" rx="2" fill="#0B1736" stroke="none" stroke-width="1" opacity="1"/>
+<text x="159" y="305.1421109303228" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.617</text>
+<rect x="195" y="314.2641926046703" width="44" height="140.7358073953297" rx="2" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="217" y="306.2641926046703" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.612</text>
+<rect x="253" y="269.75225605301614" width="44" height="185.24774394698386" rx="2" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="275" y="261.75225605301614" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.805</text>
+<text x="217" y="479" font-size="15" fill="#0B1736" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">Standard test</text>
+<text x="217" y="499" font-size="12" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">n = 147,721</text>
+<rect x="390" y="305.543796355047" width="44" height="149.45620364495298" rx="2" fill="#0B1736" stroke="none" stroke-width="1" opacity="1"/>
+<text x="412" y="297.543796355047" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.650</text>
+<rect x="448" y="311.2745698609755" width="44" height="143.72543013902452" rx="2" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="470" y="303.2745698609755" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.625</text>
+<rect x="506" y="351.47103857234185" width="44" height="103.52896142765813" rx="2" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="528" y="343.47103857234185" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.450</text>
+<text x="470" y="479" font-size="15" fill="#0B1736" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">Random test</text>
+<text x="470" y="499" font-size="12" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">n = 825,438</text>
+<rect x="658" y="159" width="604" height="370" rx="12" fill="white" stroke="#DCE3EC" stroke-width="1" opacity="1"/>
+<text x="684" y="194" font-size="22" fill="#0B1736" font-weight="750" text-anchor="start" font-style="normal" letter-spacing="0">DIN</text>
+<text x="677" y="340.0" transform="rotate(-90 677 340.0)" text-anchor="middle" font-size="12" fill="#526078">Click log loss (nats / impression)</text>
+<line x1="724" y1="455.0" x2="1227" y2="455.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="460.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.00</text>
+<line x1="724" y1="397.5" x2="1227" y2="397.5" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="402.5" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.25</text>
+<line x1="724" y1="340.0" x2="1227" y2="340.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="345.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.50</text>
+<line x1="724" y1="282.5" x2="1227" y2="282.5" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="287.5" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.75</text>
+<line x1="724" y1="225.0" x2="1227" y2="225.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="230.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">1.00</text>
+<rect x="757" y="313.73552390661496" width="44" height="141.264476093385" rx="2" fill="#0B1736" stroke="none" stroke-width="1" opacity="1"/>
+<text x="779" y="305.73552390661496" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.614</text>
+<rect x="815" y="314.9368071415514" width="44" height="140.06319285844856" rx="2" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="837" y="306.9368071415514" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.609</text>
+<rect x="873" y="273.1936347366943" width="44" height="181.8063652633057" rx="2" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="895" y="265.1936347366943" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.790</text>
+<text x="837" y="479" font-size="15" fill="#0B1736" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">Standard test</text>
+<text x="837" y="499" font-size="12" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">n = 147,721</text>
+<rect x="1010" y="305.5081848782954" width="44" height="149.49181512170458" rx="2" fill="#0B1736" stroke="none" stroke-width="1" opacity="1"/>
+<text x="1032" y="297.5081848782954" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.650</text>
+<rect x="1068" y="313.4753024772438" width="44" height="141.52469752275618" rx="2" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="1090" y="305.4753024772438" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.615</text>
+<rect x="1126" y="351.9025573828692" width="44" height="103.09744261713084" rx="2" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="1148" y="343.9025573828692" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.448</text>
+<text x="1090" y="479" font-size="15" fill="#0B1736" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">Random test</text>
+<text x="1090" y="499" font-size="12" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">n = 825,438</text>
+<rect x="38" y="547" width="604" height="370" rx="12" fill="white" stroke="#DCE3EC" stroke-width="1" opacity="1"/>
+<text x="64" y="582" font-size="22" fill="#0B1736" font-weight="750" text-anchor="start" font-style="normal" letter-spacing="0">DeepFM+MMoE</text>
+<text x="57" y="728.0" transform="rotate(-90 57 728.0)" text-anchor="middle" font-size="12" fill="#526078">Click log loss (nats / impression)</text>
+<line x1="104" y1="843.0" x2="607" y2="843.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="848.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.00</text>
+<line x1="104" y1="785.5" x2="607" y2="785.5" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="790.5" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.25</text>
+<line x1="104" y1="728.0" x2="607" y2="728.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="733.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.50</text>
+<line x1="104" y1="670.5" x2="607" y2="670.5" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="675.5" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.75</text>
+<line x1="104" y1="613.0" x2="607" y2="613.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="94" y="618.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">1.00</text>
+<rect x="137" y="701.0545551790088" width="44" height="141.94544482099116" rx="2" fill="#0B1736" stroke="none" stroke-width="1" opacity="1"/>
+<text x="159" y="693.0545551790088" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.617</text>
+<rect x="195" y="701.702046444613" width="44" height="141.297953555387" rx="2" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="217" y="693.702046444613" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.614</text>
+<rect x="253" y="658.3246542378643" width="44" height="184.67534576213575" rx="2" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="275" y="650.3246542378643" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.803</text>
+<text x="217" y="867" font-size="15" fill="#0B1736" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">Standard test</text>
+<text x="217" y="887" font-size="12" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">n = 147,721</text>
+<rect x="390" y="696.5648801347913" width="44" height="146.43511986520872" rx="2" fill="#0B1736" stroke="none" stroke-width="1" opacity="1"/>
+<text x="412" y="688.5648801347913" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.637</text>
+<rect x="448" y="701.0916080077916" width="44" height="141.90839199220846" rx="2" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="470" y="693.0916080077916" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.617</text>
+<rect x="506" y="738.2683048239787" width="44" height="104.73169517602126" rx="2" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="528" y="730.2683048239787" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.455</text>
+<text x="470" y="867" font-size="15" fill="#0B1736" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">Random test</text>
+<text x="470" y="887" font-size="12" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">n = 825,438</text>
+<rect x="658" y="547" width="604" height="370" rx="12" fill="white" stroke="#DCE3EC" stroke-width="1" opacity="1"/>
+<text x="684" y="582" font-size="22" fill="#0B1736" font-weight="750" text-anchor="start" font-style="normal" letter-spacing="0">DIN+MMoE</text>
+<text x="677" y="728.0" transform="rotate(-90 677 728.0)" text-anchor="middle" font-size="12" fill="#526078">Click log loss (nats / impression)</text>
+<line x1="724" y1="843.0" x2="1227" y2="843.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="848.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.00</text>
+<line x1="724" y1="785.5" x2="1227" y2="785.5" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="790.5" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.25</text>
+<line x1="724" y1="728.0" x2="1227" y2="728.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="733.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.50</text>
+<line x1="724" y1="670.5" x2="1227" y2="670.5" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="675.5" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">0.75</text>
+<line x1="724" y1="613.0" x2="1227" y2="613.0" stroke="#DCE3EC" stroke-width="1"/>
+<text x="714" y="618.0" font-size="12" fill="#526078" font-weight="400" text-anchor="end" font-style="normal" letter-spacing="0">1.00</text>
+<rect x="757" y="701.5318864466781" width="44" height="141.46811355332196" rx="2" fill="#0B1736" stroke="none" stroke-width="1" opacity="1"/>
+<text x="779" y="693.5318864466781" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.615</text>
+<rect x="815" y="701.8354670357927" width="44" height="141.16453296420727" rx="2" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="837" y="693.8354670357927" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.614</text>
+<rect x="873" y="660.9827506353091" width="44" height="182.01724936469085" rx="2" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="895" y="652.9827506353091" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.791</text>
+<text x="837" y="867" font-size="15" fill="#0B1736" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">Standard test</text>
+<text x="837" y="887" font-size="12" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">n = 147,721</text>
+<rect x="1010" y="700.610874961058" width="44" height="142.38912503894196" rx="2" fill="#0B1736" stroke="none" stroke-width="1" opacity="1"/>
+<text x="1032" y="692.610874961058" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.619</text>
+<rect x="1068" y="701.9925355015673" width="44" height="141.00746449843274" rx="2" fill="#1769B0" stroke="none" stroke-width="1" opacity="1"/>
+<text x="1090" y="693.9925355015673" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.613</text>
+<rect x="1126" y="739.4615451696467" width="44" height="103.53845483035332" rx="2" fill="#148A55" stroke="none" stroke-width="1" opacity="1"/>
+<text x="1148" y="731.4615451696467" font-size="12" fill="#0B1736" font-weight="600" text-anchor="middle" font-style="normal" letter-spacing="0">0.450</text>
+<text x="1090" y="867" font-size="15" fill="#0B1736" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">Random test</text>
+<text x="1090" y="887" font-size="12" fill="#526078" font-weight="400" text-anchor="middle" font-style="normal" letter-spacing="0">n = 825,438</text>
+<text x="48" y="957" font-size="16" fill="#526078" font-weight="400" text-anchor="start" font-style="normal" letter-spacing="0">Random Platt uses earlier randomized labels; both final cohorts remain held out. Same y-axis in every panel.</text>
+<text x="48" y="981" font-size="15" fill="#526078" font-weight="400" text-anchor="start" font-style="normal" letter-spacing="0">Source: artifacts/week4_results.json · Final test window: 2022-04-30 to 2022-05-08 UTC</text>
+</svg>

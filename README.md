@@ -21,7 +21,7 @@ and Bayesian Personalized Ranking (BPR) baselines.
 ## Current scope
 
 - Strict chronological train/validation/test split.
-- Random-exposure log reserved for a later bias audit.
+- Random-exposure calibration and a future, time-aligned exposure-robustness audit.
 - Popularity and ItemCF baselines.
 - BPR matrix factorization implemented from scratch in NumPy.
 - Feature- and history-aware two-tower retrieval.
@@ -29,6 +29,8 @@ and Bayesian Personalized Ranking (BPR) baselines.
 - Single-task DeepFM click ranking over fixed retrieved candidates.
 - DeepFM + MMoE ranking with eight action targets, watch time, and completion.
 - DIN and DIN + MMoE with causal target-aware click histories and a four-model comparison.
+- Frozen-model probability calibration, reliability diagrams, exposure diagnostics,
+  and paired user-bootstrap intervals on standard and randomized test impressions.
 - Recall@K, HitRate@K, NDCG@K, and catalog coverage.
 - Explicit novel-item, warm-start evaluation rather than mixing in impossible
   cold-start targets.
@@ -59,6 +61,9 @@ milestone by connecting those candidates to trained ranking models.
 3. **Week 3 — DeepFM, DIN, and MMoE ranking:** four ranking models, ten jointly trained objectives, and a
    measured fixed-candidate retrieval-to-ranking handoff. See the
    [full Week 3 experimental report](docs/week3_results.md).
+4. **Week 4 — Exposure robustness and calibration:** frozen Week 3 checkpoints,
+   standard versus early-random Platt calibration, and aligned future tests.
+   See the [Week 4 experimental report](docs/week4_results.md).
 
 ## Week 1 — Recommendation baselines
 
@@ -279,6 +284,31 @@ CLI modes are explicit: `standard` rejects configurations containing `faiss`,
 `faiss` requires a non-empty `faiss` block, and `tradeoff` uses its own fixed
 index matrix and therefore rejects a single-index `faiss` block.
 
+## Week 4 — Exposure robustness and calibration
+
+Week 4 freezes all four Week 3 models and compares their probabilities on
+standard and randomized future impressions. It fits one Platt map on the
+standard validation period and another on earlier randomized impressions,
+then evaluates both maps on later, time-aligned final cohorts. Random labels
+adapt the calibration map; model weights, feature encoders, and histories stay
+fixed. The standard validation period has already selected training epochs,
+and neither final test cohort fits calibration parameters.
+
+The audit reports click discrimination, log loss, Brier score, ECE, reliability
+diagrams, eight binary MMoE heads, shared-scenario sensitivity, exposure mix,
+and paired user-bootstrap intervals. It measures probability quality rather
+than ranking lift or off-policy value. See the
+[implementation notes](docs/week4.md) and
+[generated experimental report](docs/week4_results.md).
+
+```bash
+OMP_NUM_THREADS=1 make week4
+make week4-report
+```
+
+The first command scores the saved checkpoints and runs the full audit. The
+second rebuilds its report and figures from `artifacts/week4_results.json`.
+
 ## Evaluation notes
 
 The raw standard-policy files contain a small timestamp overlap at their
@@ -288,17 +318,18 @@ chronological evaluation.
 
 The default positive signal is `is_click`. In KuaiRand this represents a click
 for the two-column interface and a valid play for the single-column interface.
-The later randomized-exposure log is intentionally excluded from training and
-model selection.
+The randomized-exposure log is excluded from base-model training and epoch
+selection. Week 4 uses its early post-training portion for calibration and
+reserves its later portion for final evaluation.
 
 The main benchmark removes training-seen positives from each user's ground truth
 and restricts evaluation to items present in the training catalog. This protocol
 measures novel-item recommendation under a warm-start setting; cold-start items
 will be evaluated separately after content features are added.
 
-Randomized exposures will first be used as a robustness and calibration audit.
-The project will not claim unbiased off-policy evaluation without explicitly
-accounting for the relevant logging propensities.
+Randomized exposures are used for calibration adaptation and a future
+robustness audit. This pipeline does not use logging propensities and makes no
+unbiased off-policy evaluation claim.
 
 ## Roadmap
 
@@ -310,7 +341,9 @@ accounting for the relevant logging propensities.
   retrieval-to-ranking pipeline is complete. DeepFM, DIN, DeepFM + MMoE, and DIN + MMoE rerank
   the fixed Week 2 top 100 with a measured comparison. Matched history/attention
   ablations and validation-based utility tuning are next.
-- **Week 4:** random-exposure bias audit and calibrated evaluation.
+- **Week 4 — Implemented:** exposure-robustness audit and calibrated evaluation
+  of the four frozen models, with time-aligned final holdouts, reliability
+  diagrams, and paired uncertainty. Measured outputs are in the Week 4 report.
 - **Week 5:** diversity-aware reranking, FAISS serving, and final report.
 
 ## Dataset

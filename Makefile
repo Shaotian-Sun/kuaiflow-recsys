@@ -1,4 +1,4 @@
-.PHONY: install test demo download prepare benchmark deepfm mmoe din din-mmoe week3-figures week3-comparison
+.PHONY: install test demo download prepare benchmark deepfm mmoe din din-mmoe week3-figures week3-comparison week4 week4-report
 
 install:
 	python -m pip install -e .
@@ -35,3 +35,9 @@ din-mmoe:
 
 week3-comparison:
 	python -m kuaiflow.week3_comparison
+
+week4:
+	python -m kuaiflow.cli week4 --config configs/week4.yaml
+
+week4-report:
+	python -m kuaiflow.week4_report

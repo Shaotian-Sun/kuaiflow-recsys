@@ -1,0 +1,13 @@
+seed: 2026
+data:
+  processed_dir: data/processed
+  raw_dir: data/raw
+checkpoints_dir: artifacts
+artifacts_dir: artifacts
+report_root: .
+models: [deepfm, mmoe, din, din_mmoe]
+save_logits: true
+evaluation:
+  batch_size: 4096
+  calibration_bins: 10
+  bootstrap_repeats: 500
